@@ -1,6 +1,6 @@
 # CS-APP
-Self studying CS:APP  
-Repository for lab assignments.
+Repository for lab assignments.  
+Self studying CS:APP to enhance my knowledgement about computer in systemic level.   
 
 # Book Information & Course Link
 **Computer Systems: A Programmer's Perspective, 3/E (CS:APP3e)**  
