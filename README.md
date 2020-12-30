@@ -4,9 +4,8 @@
 
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
 - TA: TBA
-    + Office Hour: TBA
-      See [below](#communication) for the office hour policy.
-- Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg E11~~ Online (TBA)
+    + Office Hour: TBA. See [below](#communication) for the office hour policy.
+- Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
 - Website: https://github.com/kaist-cp/cs230
 - Announcements: in [issue
   tracker](https://github.com/kaist-cp/cs230/issues?q=is%3Aissue+is%3Aopen+label%3Aannouncement)
@@ -38,6 +37,7 @@ networks.
 ### Textbook
 
 - Randal E. Bryant and David R. O'Hallaron, [Computer Systems: A Programmer's Perspective, Third Edition](https://csapp.cs.cmu.edu/), Prentice Hall, 2011
+    + Video lectures by the authors available [here](https://scs.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx#folderID=%22b96d90ae-9871-4fae-91e2-b1627b43e25e%22&sortColumn=1&sortAscending=true)
 - Brian W. Kernighan and Dennis M. Ritchie, The C Programming Language, Second Edition, Prentice Hall, 1988 (optional)
 - [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/) (optional)
 
