@@ -3,7 +3,7 @@
 ## Logistics
 
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
-- TA: TBA
+- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim). See [below](#communication} for communication policy.
     + Office Hour: TBA. See [below](#communication) for the office hour policy.
 - Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
 - Website: https://github.com/kaist-cp/cs230
@@ -168,9 +168,12 @@ session. **You should answer to the quiz by the end of the day.**
   within 24 hours of their being posted. It is highly recommended to watch the repository so that
   new announcements will automatically be delivered to you email address.
 
-- Ask your questions via email **only if** they are either confidential or personal. Otherwise, ask
-   questions in [this repository's issue tracker](https://github.com/kaist-cp/cs230/issues).  Any
-   questions failing to do so (e.g. email questions on course materials) will not be answered.
+- Ask your questions via email to [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head
+   TA](https://cp.kaist.ac.kr/kyeongmin.cho) **only if** they are either confidential or
+   personal. Otherwise, ask questions in [this repository's issue
+   tracker](https://github.com/kaist-cp/cs230/issues). Unless otherwise specified, don't send emails
+   to non-head TAs. Any questions failing to do so (e.g. email questions on course materials) will
+   not be answered.
 
     + I'm requiring you to ask questions online first for two reasons. First, clearly writing a
       question is the first step to reach an answer. Second, you can benefit from questions and
@@ -181,7 +184,7 @@ session. **You should answer to the quiz by the end of the day.**
   issue and start discussion there. The agenda of the office hour will be the issues that are not
   resolved yet.
 
-- Emails to the instructor or TAs should begin with "CS230:" in the subject line, followed by a
-  brief description of the purpose of your email. The content should at least contain your name and
-  student number. Any emails failing to do so (e.g. emails without student number) will not be
+- Emails to the instructor or the head TA should begin with "CS230:" in the subject line, followed
+  by a brief description of the purpose of your email. The content should at least contain your name
+  and student number. Any emails failing to do so (e.g. emails without student number) will not be
   answered.
