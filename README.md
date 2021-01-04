@@ -3,8 +3,8 @@
 ## Logistics
 
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
-- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim). See [below](#communication} for communication policy.
-    + Office Hour: TBA. See [below](#communication) for the office hour policy.
+- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim). See [below](#communication) for communication policy.
+    + Office Hour: TBA. See [below](#communication) for office hour policy.
 - Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
 - Website: https://github.com/kaist-cp/cs230
 - Announcements: in [issue
@@ -44,30 +44,34 @@ In other words, this course is an introduction to realization of computing in ph
 
 ### Context 2: about computer systems
 
-TODO: For an example of the importance of such knowledge, let's think of GPS navigation systems.
-You can input your desire to reach a destination, either via touchpad or via microphone, and then the system will show you an optimal route to the destination.
-This process involves mobilization of complex physical systems, including but not limited to:
+Computer systems drive the key innovations in the field of computing.
+For an example of the importance of computer systems, let's think of GPS navigation applications.
+You can input your desire to reach a destination, either via touchpad or via microphone, and then the application will show you an optimal route to the destination.
+This process involves mobilization of (physical) computer systems, including but not limited to:
+
 - Processing signals from input devices
 - Understanding the user's intent
 - Finding out the optimal route
 - Presenting the route to output devices
 - Continuously monitoring road conditions (probably from online) and adapting the route accordingly
-Such complexity exists not only in GPS systems but also in everyday applications, however tiny it might look like.
 
-To use such a GPS navigation system, you don't need to know the system's every detail thanks to abstraction: all you need to know is how to interact (input/output) with the system.
+Without proper utilization of computer systems, not only GPS applications but also applications of deep learning, IoT, human-computer interaction, etc. cannot be made possible.
+
+To use a GPS application (and all the other applications), you don't need to know the system's every detail thanks to abstraction: all you need to know is how to interact (input/output) with the application.
 To some degree, it's true also to implement such systems: for example, if you're in charge of input devices, you don't need to know every detail of output devices.
 And yet you probably should know a general, high-level understanding of computer system structuring principles in order to communicate with colleagues.
 For example, you at least should understand how input/output typically work among multiple components of computer systems to build proper input devices.
 
 
-### Goal
 
-TODO: CS230 is a "crash course" (or rather, a whirlwind tour) for learning computer systems in general.
-You're going to learn crucial abstractions for computer systems.
+### Goal: learning abstractions of computer systems
 
-TODO(edit): In this course, you will learn how computers work from a programmer’s perspective. This course
-serves as a foundation for courses on computer organization, operating systems, compilers, and
-networks.
+CS230 is a "crash course" (or rather, a whirlwind tour) for learning how computer systems work in general.
+More specifically, you're going to learn crucial abstractions for computer systems that are historically proven to be simple and relevant at the same time.
+In doing so, you will learn these abstractions are simple (from programmer's perspective) and relevant (from builder's perspective).
+
+This course (which teaches computational abstraction of systems) complements with [CS220: Programming Principles](https://softsec.kaist.ac.kr/courses/2020s-cs220/) that teaches computational abstraction of mathematics.
+This course serves as a foundation for later courses on computer organization, operating systems, compilers, and networks.
 
 
 
