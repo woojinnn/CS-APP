@@ -34,11 +34,11 @@ As an undergraduate students, you are going to learn historically crucial ideas 
 An abstraction needs to serve two purposes.
 First, it needs to be **simple**. The primary purpose of an abstraction is let the users to forget about unnecessary details in a particular context.
 Second, it needs to be **relevant** to the real-world. A non-relevant abstraction, however simple it is, does not help the users to understand and work on real-world problem.
-Thus building an abstraction is an art of striking the balance between the two criteria. For this reasons, multiple abstractions often compete with each other with different trade-offs.
+Thus building an abstraction is an art of striking the balance between the two criteria. For these reasons, multiple abstractions often compete with each other with different trade-offs.
 
 In [CS101](http://cs101.kaist.ac.kr/), you may have learned historically crucial abstractions of computing in general.
-In CS230 (this course), we will have a more in-depth focus on historically crucial abstractions of (physical) computer systems (or in other words, machines).
-In other words, this course is an introduction to realization of computing in physical worlds.
+In CS230 (this course), we will have a more in-depth focus on historically crucial abstractions of physical computer systems (or in other words, machines).
+Put differently, this course is an introduction to realization of computing in physical worlds.
 
 
 
@@ -66,11 +66,10 @@ For example, you at least should understand how input/output typically work amon
 
 ### Goal: learning abstractions of computer systems
 
-CS230 is a "crash course" (or rather, a whirlwind tour) for learning how computer systems work in general.
-More specifically, you're going to learn crucial abstractions for computer systems that are historically proven to be simple and relevant at the same time.
-In doing so, you will learn these abstractions are simple (from programmer's perspective) and relevant (from builder's perspective).
+CS230 is a *crash course* (or rather, a *whirlwind tour*) for learning how computer systems work in general.
+More specifically, you're going to learn crucial abstractions for computer systems that are historically proven to be simple (from programmer's perspective) and relevant (from builder's perspective) at the same time.
 
-This course (which teaches computational abstraction of systems) complements with [CS220: Programming Principles](https://softsec.kaist.ac.kr/courses/2020s-cs220/) that teaches computational abstraction of mathematics.
+This course (which teaches computational abstraction of systems) complements with [CS220: Programming Principles](https://softsec.kaist.ac.kr/courses/2020s-cs220/) (which teaches computational abstraction of mathematics).
 This course serves as a foundation for later courses on computer organization, operating systems, compilers, and networks.
 
 
