@@ -6,9 +6,9 @@
 - TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim). See [below](#communication) for communication policy.
     + Office Hour: TBA. See [below](#communication) for office hour policy.
 - Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
-- Website: https://github.com/kaist-cp/cs230
+- Website: https://cp-git.kaist.ac.kr/cs230/cs230
 - Announcements: in [issue
-  tracker](https://github.com/kaist-cp/cs230/issues?q=is%3Aissue+is%3Aopen+label%3Aannouncement)
+  tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues?label_name%5B%5D=announcement)
 
 
 
@@ -91,47 +91,56 @@ Make sure you're capable of using the following development tools:
   tutorial](https://www.atlassian.com/git/tutorials).
 
     + **IMPORTANT**: you should not expose your work to others. In particular, you should not fork
-      the [upstream](https://github.com/kaist-cp/cs230) and push there. Please the following
+      the [upstream](https://cp-git.kaist.ac.kr/cs230/cs230) and push there. Please the following
       steps:
 
         * Directly clone the upstream without forking it.
 
           ```bash
-          $ git clone --origin upstream https://github.com/kaist-cp/cs230.git
+          $ git clone --origin upstream https://cp-git.kaist.ac.kr/cs230/cs230.git
           $ cd cs230
           $ git remote -v
-          upstream	https://github.com/kaist-cp/cs230.git (fetch)
-          upstream	https://github.com/kaist-cp/cs230.git (push)
+          upstream	https://cp-git.kaist.ac.kr/cs230/cs230.git (fetch)
+          upstream	https://cp-git.kaist.ac.kr/cs230/cs230.git (push)
           ```
 
-        * To get updates from the upstream, fetch and merge `upstream/master`.
+        * To get updates from the upstream, fetch and merge `upstream/main`.
 
           ```bash
           $ git fetch upstream
-          $ git merge upstream/master
+          $ git merge upstream/main
           ```
 
     + If you want to manage your development in a Git server, please create your own private
       repository.
 
-        * You may upgrade your GitHub account to "PRO", which is free of charge. Refer to the
-          [documentation](https://education.github.com/students)
+        * You may use a cp-git.kaist.ac.kr account we will provide.
+
+        * You may also upgrade your GitHub account to "PRO", which is free of charge. Refer to the
+          [documentation](https://education.github.com/students).
 
         * Set up your repository as a remote.
 
           ```bash
-          $ git remote add origin git@github.com:<github-id>/cs230.git
+          $ git remote add origin ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git
           $ git remote -v
-          origin	 git@github.com:<github-id>/cs230.git (fetch)
-          origin	 git@github.com:<github-id>/cs230.git (push)
-          upstream https://github.com/kaist-cp/cs230.git (fetch)
-          upstream https://github.com/kaist-cp/cs230.git (push)
+          origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (fetch)
+          origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (push)
+          upstream https://cp-git.kaist.ac.kr/cs230/cs230.git (fetch)
+          upstream https://cp-git.kaist.ac.kr/cs230/cs230.git (push)
+          ```
+
+          Alternatively, you may use a GitHub private repository as follows.
+
+          ```bash
+          $ git remote add origin git@github.com:<github-id>/cs230.git
+          ...
           ```
 
         * Push to your repository.
 
           ```bash
-          $ git push -u origin master
+          $ git push -u origin main
           ```
 
 - [Visual Studio Code](https://code.visualstudio.com/) (optional): for developing your homework. If
@@ -139,7 +148,7 @@ Make sure you're capable of using the following development tools:
       
 - You can connect to server by `ssh s<student-id>@cp-service.kaist.ac.kr -p13000`, e.g., `ssh
   s20071163@cp-service.kaist.ac.kr -p13000`. See [this
-  issue](https://github.com/kaist-cp/cs230/issues/2) for more detail.
+  issue](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues/2) for more detail.
 
     + Add the following lines in your `~/.ssh/config`:
     
@@ -198,17 +207,17 @@ session. **You should answer to the quiz by the end of the day.**
 ## Communication
 
 - Course-related announcements and information will be posted on the
-  [website](https://github.com/kaist-cp/cs230) or on the [GitHub issue
-  tracker](https://github.com/kaist-cp/cs230/issues). You are expected to read all announcements
-  within 24 hours of their being posted. It is highly recommended to watch the repository so that
-  new announcements will automatically be delivered to you email address.
+  [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the [issue
+  tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues). You are expected to read all
+  announcements within 24 hours of their being posted. It is highly recommended to watch the
+  repository so that new announcements will automatically be delivered to you email address.
 
 - Ask your questions via email to [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head
    TA](https://cp.kaist.ac.kr/kyeongmin.cho) **only if** they are either confidential or
-   personal. Otherwise, ask questions in [this repository's issue
-   tracker](https://github.com/kaist-cp/cs230/issues). Unless otherwise specified, don't send emails
-   to non-head TAs. Any questions failing to do so (e.g. email questions on course materials) will
-   not be answered.
+   personal. Otherwise, ask questions in the [issue
+   tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues). Unless otherwise specified, don't send
+   emails to non-head TAs. Any questions failing to do so (e.g. email questions on course materials)
+   will not be answered.
 
     + I'm requiring you to ask questions online first for two reasons. First, clearly writing a
       question is the first step to reach an answer. Second, you can benefit from questions and
