@@ -3,7 +3,7 @@
 ## Logistics
 
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
-- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), TBA, TBA.
+- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), [Jaehwang Jung](https://cp.kaist.ac.kr/jaehwang.jung), TBA.
   See [below](#communication) for communication policy.
     + Office Hour: TBA. See [below](#communication) for office hour policy.
 - Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
