@@ -156,9 +156,32 @@ Make sure you're capable of using the following development tools:
 There will be about 6 or 7 programming assignments. The assignments are the most important part of
 this course. All the assignments are single-student assignments.
 
+We will be checking for cheating and copying. You are not allowed to use others code unless specified in the lab README.
+
 Assignments will be due at 11:59pm on the specified due date. **After the due date, your submission
 will not be accepted.**
 
+#### Evaluation
+
+All submitted C files should be properly formatted. Otherwise, you will get 0 points.
+Before submission, format your file with `make format`:
+
+```
+unix> make format
+```
+
+Your solution will be tested on a same Linux machine that you were provided with.
+Some labs are machine-dependent, so do work on your provided environment.
+
+You are free to modify other files, but make sure your solution works with the original files.
+
+#### Handin Instructions
+
+Go to [the submission website](https://gg.kaist.ac.kr/course/7/) and submit solution file(s).
+
+Choose the corresponding lab in ASSIGNMENTS table; upload your solution file(s); and then click the submit button.
+
+And check if the result is as expected. You can check detail information in log.
 
 ### Midterm and final exams (70%)
 
