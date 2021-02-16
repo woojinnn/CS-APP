@@ -91,58 +91,30 @@ Make sure you're capable of using the following development tools:
   development. If you're not familiar with Git, walk through [this
   tutorial](https://www.atlassian.com/git/tutorials).
 
-    + **IMPORTANT**: you should not expose your work to others. In particular, you should not fork
-      the [upstream](https://cp-git.kaist.ac.kr/cs230/cs230) and push there. Please the following
-      steps:
+    + **IMPORTANT**: you should not expose your work to others.
+      For each lab, fork the lab project to your private namespace in <https://cp-git.kaist.ac.kr>; make it private; and then clone it.
+        * Forking a project: https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork
+        * Making the project private: https://docs.gitlab.com/ee/public_access/public_access.html#how-to-change-project-visibility
+        * Cloning the project: https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html
 
-        * Directly clone the upstream without forking it.
+    + To get updates from the upstream, fetch and merge `upstream/main`.
 
-          ```bash
-          $ git clone --origin upstream https://cp-git.kaist.ac.kr/cs230/cs230.git
-          $ cd cs230
-          $ git remote -v
-          upstream	https://cp-git.kaist.ac.kr/cs230/cs230.git (fetch)
-          upstream	https://cp-git.kaist.ac.kr/cs230/cs230.git (push)
-          ```
+      ```bash
+      $ git remote add upstream ssh://git@cp-git.kaist.ac.kr:9001/jeehoon.kang/cs230-lab-datalab.git # for datalab
+      $ git remote -v
+      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230-lab-datalab.git (fetch)
+      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230-lab-datalab.git (push)
+      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230-lab-datalab.git (fetch)
+      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230-lab-datalab.git (push)
+      $ git fetch upstream
+      $ git merge upstream/main
+      ```
 
-        * To get updates from the upstream, fetch and merge `upstream/main`.
+    + You may push your local development to your project.
 
-          ```bash
-          $ git fetch upstream
-          $ git merge upstream/main
-          ```
-
-    + If you want to manage your development in a Git server, please create your own private
-      repository.
-
-        * You may use a cp-git.kaist.ac.kr account we will provide.
-
-        * You may also upgrade your GitHub account to "PRO", which is free of charge. Refer to the
-          [documentation](https://education.github.com/students).
-
-        * Set up your repository as a remote.
-
-          ```bash
-          $ git remote add origin ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git
-          $ git remote -v
-          origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (fetch)
-          origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (push)
-          upstream https://cp-git.kaist.ac.kr/cs230/cs230.git (fetch)
-          upstream https://cp-git.kaist.ac.kr/cs230/cs230.git (push)
-          ```
-
-          Alternatively, you may use a GitHub private repository as follows.
-
-          ```bash
-          $ git remote add origin git@github.com:<github-id>/cs230.git
-          ...
-          ```
-
-        * Push to your repository.
-
-          ```bash
-          $ git push -u origin main
-          ```
+      ```bash
+      $ git push -u origin main
+      ```
 
 - [Visual Studio Code](https://code.visualstudio.com/) (optional): for developing your homework. If
   you prefer other editors, you're good to go.
