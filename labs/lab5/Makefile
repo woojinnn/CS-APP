@@ -16,7 +16,7 @@ CFORMAT = clang-format-10
 all: format grade
 
 grade: format-check $(FILES)
-	./grade-shlab.pl -f tsh.c
+	./grade.sh
 
 build: $(FILES)
 
