@@ -223,6 +223,12 @@ This grades your solution using 16 trace files.
 It also checks your code is formatted properly.
 Also make sure your `tsh.c` works with the original files.
 
+You can also test your solution against each trace file with the following command:
+
+```bash
+./checktsh.pl -e -t trace03.txt
+```
+
 ## Handin Instructions
 
  Go to [the submission website](https://gg.kaist.ac.kr/assignment/30/) and submit your `tsh.c`.
