@@ -232,6 +232,7 @@ You can also test your solution against each trace file with the following comma
 ## Handin Instructions
 
  Go to [the submission website](https://gg.kaist.ac.kr/assignment/30/) and submit your `tsh.c`.
+ See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice
 

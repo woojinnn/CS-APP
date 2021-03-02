@@ -251,6 +251,7 @@ Also make sure your `proxy.c` works with the original files.
 ## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/32/) and submit your `proxy.c`.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice
 

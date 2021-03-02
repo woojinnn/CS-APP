@@ -46,9 +46,10 @@ It evaluates your code style and program correctness by executing `make format-c
 
 Your solution will be tested on a same Linux machine that you were provided, using the same testing script that were included in your lab directory.
 
-## Hand In Instructions
+## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/26/) and submit your `list.c`.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice
 

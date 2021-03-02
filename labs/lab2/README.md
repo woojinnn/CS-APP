@@ -178,6 +178,7 @@ Normalized. +1.8135598898 X 2^(-126)
 ## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/27/) and submit your `bits.c`.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice
 
