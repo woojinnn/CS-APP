@@ -18,11 +18,11 @@ You will generate attacks for target programs that are custom generated for you.
 
 ## Handout Instructions
 
-You can obtain your bomb in provided server. It is in `$HOME/attacklab` directory of your provided server machine.
+You can obtain your bomb in provided server. It is in `$HOME/handouts` directory of your provided server machine.
 
-Give the command: `tar -xvf target.tar` to extract file.
+Give the command: `tar -xvf attacklab.tar` to extract file.
 
-The files in `target` include:
+The files in `attacklab` include:
 
 * `README.txt`: A file describing the contents of the directory
 * `ctarget`: An executable program vulnerable to code-injection attacks
