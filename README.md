@@ -6,17 +6,19 @@
 - TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), [Jaehwang Jung](https://cp.kaist.ac.kr/jaehwang.jung), TBA.
   See [below](#communication) for communication policy.
     + Office Hour: TBA. See [below](#communication) for office hour policy.
-- Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (TBA)
-- Website: https://cp-git.kaist.ac.kr/cs230/cs230
-- Announcements: in [issue
-  tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues?label_name%5B%5D=announcement)
-
+- Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (announced in [chat](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement))
+- Course Website: https://cp-git.kaist.ac.kr/cs230/cs230
+- Chat Website: https://cp-cs230.kaist.ac.kr
+- Lab Submission website: https://gg.kaist.ac.kr/course/7
+- Announcements: in [issue tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues?label_name%5B%5D=announcement) or in [chat](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement)
+    + We assume you read each announcement within 24 hours.
+    + We strongly recommend you to watch the repository and use desktop/mobile Zulip client for prompt access to the announcements.
 
 
 ### Online sessions
 
 Due to COVID-19, we're going to conduct online sessions for this semester.
-The details are TBA.
+Please see the [announcement](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement) for more details.
 
 
 
@@ -83,62 +85,8 @@ This course serves as a foundation for later courses on computer organization, o
 - [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/) (optional)
     + [Korean translation](https://missing-semester-kr.github.io/)
 
-### Tools
 
-Make sure you're capable of using the following development tools:
-
-- [Git](https://git-scm.com/): for downloading the homework skeleton and version-controlling your
-  development. If you're not familiar with Git, walk through [this
-  tutorial](https://www.atlassian.com/git/tutorials).
-
-    + **IMPORTANT**: you should not expose your work to others.
-      For each lab, fork the lab project to your private namespace in <https://cp-git.kaist.ac.kr>; make it private; and then clone it.
-        * Forking a project: https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork
-        * Making the project private: https://docs.gitlab.com/ee/public_access/public_access.html#how-to-change-project-visibility
-        * Cloning the project: https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html
-
-    + To get updates from the upstream, fetch and merge `upstream/main`.
-
-      ```bash
-      $ git remote add upstream ssh://git@cp-git.kaist.ac.kr:9001/jeehoon.kang/cs230-lab-datalab.git # for datalab
-      $ git remote -v
-      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230-lab-datalab.git (fetch)
-      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230-lab-datalab.git (push)
-      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230-lab-datalab.git (fetch)
-      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230-lab-datalab.git (push)
-      $ git fetch upstream
-      $ git merge upstream/main
-      ```
-
-    + You may push your local development to your project.
-
-      ```bash
-      $ git push -u origin main
-      ```
-
-- [Visual Studio Code](https://code.visualstudio.com/) (optional): for developing your homework. If
-  you prefer other editors, you're good to go.
-      
-- You can connect to server by `ssh s<student-id>@cp-service.kaist.ac.kr -p13000`, e.g., `ssh
-  s20071163@cp-service.kaist.ac.kr -p13000`. See [this
-  issue](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues/2) for more detail.
-
-    + Add the following lines in your `~/.ssh/config`:
-    
-      ```
-      Host cs230
-        Hostname cp-service.kaist.ac.kr
-        Port 14000
-        User s<student-id>
-      ```
-      
-      Then you can connect to the server by `ssh cs230`.
-
-    + Now you can [use it as a VSCode remote server as in the video](https://www.youtube.com/watch?v=TTVuUIhdn_g&list=PL5aMzERQ_OZ8RWqn-XiZLXm1IJuaQbXp0&index=3).
-
-
-
-## Prerequisites
+### Prerequisites
 
 - It is **required** that students already took courses on:
 
@@ -150,6 +98,11 @@ Make sure you're capable of using the following development tools:
 
 
 ## Grading & honor code
+
+### Honor code
+
+[Please sign KAIST School of Computing Honor Code here](https://gg.kaist.ac.kr/quiz/35/).
+
 
 ### Programming assignments (30%)
 
@@ -183,6 +136,69 @@ Choose the corresponding lab in ASSIGNMENTS table; upload your solution file(s);
 
 And check if the result is as expected. You can check detail information in log.
 
+#### Tools
+
+Make sure you're capable of using the following development tools:
+
+- [Git](https://git-scm.com/): for downloading the homework skeleton and version-controlling your
+  development. If you're not familiar with Git, walk through [this
+  tutorial](https://www.atlassian.com/git/tutorials).
+
+    + **IMPORTANT**: you should not expose your work to others.
+      For this purpose, you will be provided with a [Gitlab](https://cp-git.kaist.ac.kr) account (see [below](#communication)).
+
+    + Fork this repository to your private namespace in <https://cp-git.kaist.ac.kr>; make it private; and then clone it.
+        * Forking a project: https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork
+        * Making the project private: https://docs.gitlab.com/ee/public_access/public_access.html#how-to-change-project-visibility
+        * Cloning the project: https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html
+
+    + To get updates from the upstream, fetch and merge `upstream/main`.
+
+      ```bash
+      $ git remote add upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230.git
+      $ git remote -v
+      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (fetch)
+      origin	 ssh://git@cp-git.kaist.ac.kr:9001/<your-id>/cs230.git (push)
+      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230.git (fetch)
+      upstream ssh://git@cp-git.kaist.ac.kr:9001/cs230/cs230.git (push)
+      $ git fetch upstream
+      $ git merge upstream/main
+      ```
+
+    + You may push your local development to the Gitlab server.
+
+      ```bash
+      $ git push -u origin main
+      ```
+
+- [Visual Studio Code](https://code.visualstudio.com/) (optional): for developing your homework. If you prefer other editors, you're good to go.
+      
+
+- You can connect to server by `ssh s<student-id>@cp-service.kaist.ac.kr -p13000`, e.g., `ssh s20071163@cp-service.kaist.ac.kr -p13000`. 
+
+    + **IMPORTANT: Don't try to hack. Don't try to freeze the server. Please be nice.**
+
+    + Your initial password is `123454321`. IMPORTANT: you should change it ASAP.
+      
+    + I require you to register public SSH keys to the server. (In March, we'll expire your password so that you can log in only via SSH keys.)
+      See [this tutorial](https://serverpilot.io/docs/how-to-use-ssh-public-key-authentication/) for more information on SSH public key authentication.
+      Use `ed25519`.
+
+    + In your client, you may want to set your `~/.ssh/config` as follows for easier SSH access:
+
+      ```
+      Host cs230
+      Hostname cp-service.kaist.ac.kr
+      Port 13000
+      User s20071163
+      ```
+      
+      Then you can connect to the server by `ssh cs230`.
+
+    + Now you can [use it as a VSCode remote server as in the video](https://www.youtube.com/watch?v=TTVuUIhdn_g&list=PL5aMzERQ_OZ8RWqn-XiZLXm1IJuaQbXp0&index=3).
+
+
+
 ### Midterm and final exams (70%)
 
 The exams will evaluate your theoretical understanding of shared mutable states.
@@ -194,13 +210,43 @@ You should solve a quiz at the [Course Management](https://gg.kaist.ac.kr/course
 session. **You should answer to the quiz by the end of the day.**
 
 
-### Honor code
-
-[Please sign KAIST School of Computing Honor Code here](https://gg.kaist.ac.kr/quiz/35/).
-
-
 
 ## Communication
+
+### Registration
+
+- Make sure you can log in the [chat website](https://cp-cs230.kaist.ac.kr).
+  If you cannot, please see KLMS/email announcements first, and then send an email to the head TA.
+  
+- Retrieve Zoom session information at chat's [announcement stream](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement).
+
+- Make sure you can log in [Gitlab](https://cp-git.kaist.ac.kr).
+
+    + An email should have been sent to your `@kaist.ac.kr` email address for confirming the address. Please do so.
+      If not, please contact the head TA in the chat.
+
+    + Reset your password by clicking "Forgot your password?" [here](https://cp-git.kaist.ac.kr/users/sign_in).
+
+    + Log in with your email address and the new password. 
+      If you cannot, please contact the head TA in the chat.
+
+    + Assignments will be hosted here: https://cp-git.kaist.ac.kr/cs230/cs230 
+
+- Make sure you can log in the [lab submission website](https://gg.kaist.ac.kr).
+
+    + Reset your password here: https://gg.kaist.ac.kr/accounts/password_reset/
+      The email address is your `@kaist.ac.kr` address.
+
+    + The id is your student id (e.g., 20071163).
+
+    + Log in with your email address and the new password. 
+      If you cannot, please contact the head TA in the chat.
+
+    + Sign [the honor code](https://gg.kaist.ac.kr/quiz/35/) by March 12nd.
+      Otherwise, you will be expelled from the class.
+
+
+### Rules
 
 - Course-related announcements and information will be posted on the
   [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the 
@@ -208,6 +254,16 @@ session. **You should answer to the quiz by the end of the day.**
   You are expected to read all announcements within 24 hours of their being posted. It is highly 
   recommended to watch the repository so that new announcements will automatically be delivered to 
   you email address.
+
+- Ask questions on lab assignments in the dedicated streams ([example](https://cp-cs230.kaist.ac.kr/#narrow/stream/5-cs230-lab-linkedlistlab)).
+    + Don't DM to the instructor or TAs.
+    + Before asking a question, search for similar ones in Zulip and Google.
+    + Describe your question as detailed as possible.
+    + Properly Name your question as the topic.
+    + Read [this](https://cp-git.kaist.ac.kr/cs230/cs230#communication) for more instructions.
+
+- Ask questions on lectures in the dedicated stream (e.g., https://cp-cs230.kaist.ac.kr/#narrow/stream/4-cs230-lecture).
+    + The instructions for lab assignment questions apply also to lecture questions.
 
 - Ask your questions via [Zulip](https://cp-cs230.kaist.ac.kr/) private messages to 
   [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head TA](https://cp.kaist.ac.kr/kyeongmin.cho)
