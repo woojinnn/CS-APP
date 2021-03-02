@@ -203,17 +203,17 @@ session. **You should answer to the quiz by the end of the day.**
 ## Communication
 
 - Course-related announcements and information will be posted on the
-  [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the [issue
-  tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues). You are expected to read all
-  announcements within 24 hours of their being posted. It is highly recommended to watch the
-  repository so that new announcements will automatically be delivered to you email address.
+  [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the 
+  [Zulip announcement](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement). 
+  You are expected to read all announcements within 24 hours of their being posted. It is highly 
+  recommended to watch the repository so that new announcements will automatically be delivered to 
+  you email address.
 
-- Ask your questions via email to [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head
-   TA](https://cp.kaist.ac.kr/kyeongmin.cho) **only if** they are either confidential or
-   personal. Otherwise, ask questions in the [issue
-   tracker](https://cp-git.kaist.ac.kr/cs230/cs230/-/issues). Unless otherwise specified, don't send
-   emails to non-head TAs. Any questions failing to do so (e.g. email questions on course materials)
-   will not be answered.
+- Ask your questions via [Zulip](https://cp-cs230.kaist.ac.kr/) private messages to 
+  [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head TA](https://cp.kaist.ac.kr/kyeongmin.cho)
+  **only if** they are either confidential or personal. Otherwise, ask questions in the
+  appropriate stream. Unless otherwise specified, don't send emails to the instructor or TAs.
+  Any questions failing to do so (e.g. email questions on course materials) will not be answered.
 
     + I'm requiring you to ask questions online first for two reasons. First, clearly writing a
       question is the first step to reach an answer. Second, you can benefit from questions and
