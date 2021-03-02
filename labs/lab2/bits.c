@@ -61,12 +61,15 @@ INTEGER CODING RULES:
   6. Use any form of casting.
   7. Use any data type other than int.  This implies that you
      cannot use arrays, structs, or unions.
+     If the puzzle involves unsigned data type, you are also allowed
+     to use it.
 
  
   You may assume that your machine:
   1. Uses 2s complement, 32-bit representations of integers.
   2. Performs right shifts arithmetically.
-  3. Has unpredictable behavior when shifting if the shift amount
+  3. Has unpredictable behavior on signed integer overflows.
+  4. Has unpredictable behavior when shifting if the shift amount
      is less than 0 or greater than 31.
 
 

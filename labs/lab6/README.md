@@ -133,6 +133,7 @@ If you want to test your file against specific trace file, use `mdriver -f`. For
 ## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/31/) and submit your `mm.c`.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice
 

@@ -78,6 +78,7 @@ We will use same command to grade your solution.
 ## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/28/) and submit the text file that can defuse your bomb.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 ## Advice (Please read this!)
 

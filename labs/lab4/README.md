@@ -335,6 +335,7 @@ unix> cat [your_RTARGET_exploit_file] | ./hex2raw | ./rtarget
 ## Handin Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/29/) and submit the text files that can exploit your targets.
+See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
 You should submit 5 files:
 
