@@ -3,7 +3,7 @@
 ## Logistics
 
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
-- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), [Jaehwang Jung](https://cp.kaist.ac.kr/jaehwang.jung), TBA.
+- TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), [Jaehwang Jung](https://cp.kaist.ac.kr/jaehwang.jung), Chanyoung Chung
   See [below](#communication) for communication policy.
     + Office Hour: TBA. See [below](#communication) for office hour policy.
 - Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (announced in [chat](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement))
@@ -103,16 +103,44 @@ This course serves as a foundation for later courses on computer organization, o
 
 [Please sign KAIST School of Computing Honor Code here](https://gg.kaist.ac.kr/quiz/35/).
 
+#### Cheating
 
-### Programming assignments (30%)
+**IMPORTANT: PAY CLOSE ATTENTION. VERY SERIOUS.**
+
+- Cheating is including, but not limited to, the following activities:
+
+    + *Sharing*: code, document, or any products by copying, retyping, **looking at**, or supplying a file​
+    + *Describing*: verbal description of code from one person to another
+    + *Coaching*: helping your friend to write a lab, line by line​
+    + *Searching*: **the Web for solutions​**
+    + *Copying*: code from a previous course or online solution​ (you are only allowed to use code we supply)
+
+- Cheating doesn't include the following activities:
+
+    + Explaining how to use systems or tools​
+    + Helping others with high-level design issues
+
+- **Cheating will be harshly punished.**
+
+    + I will raise an issue to the Reward and Punishment Committee.
+    + Ignorance is no excuse.
+    + So don't do it and start early.
+
+- We will use sophisticated tools for detecting code plagiarism​.
+
+    + [Google "code plagiarism detector" for images](https://www.google.com/search?q=code+plagiarism+detector&tbm=isch) and see how these tools can detect "sophisticated" plagiarisms.
+      You really cannot escape my catch. Just don't try plagiarism in any form.
+
+
+### Programming assignments (40% with different weights among labs)
 
 There will be about 6 or 7 programming assignments. The assignments are the most important part of
 this course. All the assignments are single-student assignments.
 
-We will be checking for cheating and copying. You are not allowed to use others code unless specified in the lab README.
+We will check for cheating (including copying). You are not allowed to use others' code unless otherwise specified in the lab README.
 
-Assignments will be due at 11:59pm on the specified due date. **After the due date, your submission
-will not be accepted.**
+Assignments will be due at 11:59pm on the specified due date. **After the due date, your submission will not be accepted.**
+
 
 #### Evaluation
 
@@ -120,7 +148,7 @@ All submitted C files should be properly formatted. Otherwise, you will get 0 po
 Before submission, format your file with `make format`:
 
 ```
-unix> make format
+$ make format
 ```
 
 Your solution will be tested on a same Linux machine that you were provided with.
@@ -128,13 +156,13 @@ Some labs are machine-dependent, so do work on your provided environment.
 
 You are free to modify other files, but make sure your solution works with the original files.
 
-#### Handin Instructions
+#### Hand-in Instructions
 
 Go to [the submission website](https://gg.kaist.ac.kr/course/7/) and submit solution file(s).
 
 Choose the corresponding lab in ASSIGNMENTS table; upload your solution file(s); and then click the submit button.
 
-And check if the result is as expected. You can check detail information in log.
+You should check the log and see if the result is as expected.
 
 #### Tools
 
@@ -172,14 +200,14 @@ Make sure you're capable of using the following development tools:
       ```
 
 - [Visual Studio Code](https://code.visualstudio.com/) (optional): for developing your homework. If you prefer other editors, you're good to go.
-      
 
-- You can connect to server by `ssh s<student-id>@cp-service.kaist.ac.kr -p13000`, e.g., `ssh s20071163@cp-service.kaist.ac.kr -p13000`. 
+
+- You can connect to server by `ssh s<student-id>@cp-service.kaist.ac.kr -p13000`, e.g., `ssh s20071163@cp-service.kaist.ac.kr -p13000`.
 
     + **IMPORTANT: Don't try to hack. Don't try to freeze the server. Please be nice.**
 
     + Your initial password is `123454321`. IMPORTANT: you should change it ASAP.
-      
+
     + I require you to register public SSH keys to the server. (In March, we'll expire your password so that you can log in only via SSH keys.)
       See [this tutorial](https://serverpilot.io/docs/how-to-use-ssh-public-key-authentication/) for more information on SSH public key authentication.
       Use `ed25519`.
@@ -192,22 +220,32 @@ Make sure you're capable of using the following development tools:
       Port 13000
       User s20071163
       ```
-      
+
       Then you can connect to the server by `ssh cs230`.
 
     + Now you can [use it as a VSCode remote server as in the video](https://www.youtube.com/watch?v=TTVuUIhdn_g&list=PL5aMzERQ_OZ8RWqn-XiZLXm1IJuaQbXp0&index=3).
 
 
 
-### Midterm and final exams (70%)
+### Midterm and final exams (30% + 30%)
 
-The exams will evaluate your theoretical understanding of shared mutable states.
+- Study Guide: at least 2/3 of points will be related to lab assignments.
+
+- Date & Time: April 21st (midterm) and June 16th (final), 09:00am-11:45am (or shorter, TBA)
+
+- Place: online
+
+    + You need to set up a separate camera that shows you, your hand, pencil and paper, and monitor, as in [this picture](https://user-images.githubusercontent.com/1201316/95432855-28d33800-098a-11eb-9b18-b515c34bb2e9.jpg).
+      If you cannot do so, you will not be able to take this course.
+
+- Appealing: TBA
 
 
 ### Attendance (?%)
 
-You should solve a quiz at the [Course Management](https://gg.kaist.ac.kr/course/7) website for each
-session. **You should answer to the quiz by the end of the day.**
+- You should solve a quiz at the [Course Management](https://gg.kaist.ac.kr/course/7) website for each session. **You should answer to the quiz by the end of the day.**
+
+- If you miss a significant number of sessions, you'll automatically get an F.
 
 
 
@@ -217,7 +255,7 @@ session. **You should answer to the quiz by the end of the day.**
 
 - Make sure you can log in the [chat website](https://cp-cs230.kaist.ac.kr).
   If you cannot, please see KLMS/email announcements first, and then send an email to the head TA.
-  
+
 - Retrieve Zoom session information at chat's [announcement stream](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement).
 
 - Make sure you can log in [Gitlab](https://cp-git.kaist.ac.kr).
@@ -227,10 +265,10 @@ session. **You should answer to the quiz by the end of the day.**
 
     + Reset your password by clicking "Forgot your password?" [here](https://cp-git.kaist.ac.kr/users/sign_in).
 
-    + Log in with your email address and the new password. 
+    + Log in with your email address and the new password.
       If you cannot, please contact the head TA in the chat.
 
-    + Assignments will be hosted here: https://cp-git.kaist.ac.kr/cs230/cs230 
+    + Assignments will be hosted here: https://cp-git.kaist.ac.kr/cs230/cs230
 
 - Make sure you can log in the [lab submission website](https://gg.kaist.ac.kr).
 
@@ -239,7 +277,7 @@ session. **You should answer to the quiz by the end of the day.**
 
     + The id is your student id (e.g., 20071163).
 
-    + Log in with your email address and the new password. 
+    + Log in with your email address and the new password.
       If you cannot, please contact the head TA in the chat.
 
     + Sign [the honor code](https://gg.kaist.ac.kr/quiz/35/) by March 12nd.
@@ -249,10 +287,10 @@ session. **You should answer to the quiz by the end of the day.**
 ### Rules
 
 - Course-related announcements and information will be posted on the
-  [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the 
-  [Zulip announcement](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement). 
-  You are expected to read all announcements within 24 hours of their being posted. It is highly 
-  recommended to watch the repository so that new announcements will automatically be delivered to 
+  [website](https://cp-git.kaist.ac.kr/cs230/cs230) or on the
+  [Zulip announcement](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement).
+  You are expected to read all announcements within 24 hours of their being posted. It is highly
+  recommended to watch the repository so that new announcements will automatically be delivered to
   you email address.
 
 - Ask questions on lab assignments in the dedicated streams ([example](https://cp-cs230.kaist.ac.kr/#narrow/stream/5-cs230-lab-linkedlistlab)).
@@ -265,7 +303,7 @@ session. **You should answer to the quiz by the end of the day.**
 - Ask questions on lectures in the dedicated stream (e.g., https://cp-cs230.kaist.ac.kr/#narrow/stream/4-cs230-lecture).
     + The instructions for lab assignment questions apply also to lecture questions.
 
-- Ask your questions via [Zulip](https://cp-cs230.kaist.ac.kr/) private messages to 
+- Ask your questions via [Zulip](https://cp-cs230.kaist.ac.kr/) private messages to
   [the instructor](https://cp.kaist.ac.kr/jeehoon.kang) or [the head TA](https://cp.kaist.ac.kr/kyeongmin.cho)
   **only if** they are either confidential or personal. Otherwise, ask questions in the
   appropriate stream. Unless otherwise specified, don't send emails to the instructor or TAs.
