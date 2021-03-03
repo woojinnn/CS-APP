@@ -325,3 +325,5 @@ Make sure you're capable of using the following development tools:
 
 - Your Zoom name should be `<your student number> <your name>` (e.g., 20071163 강지훈).
   Change your name by referring to [this](https://support.zoom.us/hc/en-us/articles/201363203-Customizing-your-profile).
+
+- This course is conducted in English. But you may ask questions in Korean. Then I will translate it to English.
