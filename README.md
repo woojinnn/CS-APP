@@ -322,3 +322,6 @@ Make sure you're capable of using the following development tools:
   by a brief description of the purpose of your email. The content should at least contain your name
   and student number. Any emails failing to do so (e.g. emails without student number) will not be
   answered.
+
+- Your Zoom name should be `<your student number> <your name>` (e.g., 20071163 강지훈).
+  Change your name by referring to [this](https://support.zoom.us/hc/en-us/articles/201363203-Customizing-your-profile).
