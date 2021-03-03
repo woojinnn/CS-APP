@@ -2,7 +2,7 @@
 # Makefile that builds btest and other helper programs for the CS:APP data lab
 # 
 CC = gcc
-CFLAGS = -O -m32 -Wall -Wextra -Wno-unused-parameter -Wno-cast-function-type -Wno-unused-variable -Werror -pedantic -fsanitize=address
+CFLAGS = -O -m32 -Wall -Wextra -Wno-unused-parameter -Wno-cast-function-type -Wno-unused-variable -Werror -pedantic -fsanitize=address -Wno-implicit-function-declaration -fno-builtin-printf
 LIBS = -lm
 
 # C formatting related constants
