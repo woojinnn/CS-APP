@@ -160,9 +160,10 @@ You are free to modify other files, but make sure your solution works with the o
 
 Go to [the submission website](https://gg.kaist.ac.kr/course/7/) and submit solution file(s).
 
-Choose the corresponding lab in ASSIGNMENTS table; upload your solution file(s); and then click the submit button.
+Choose the corresponding lab in "ASSIGNMENTS" table; upload your solution file(s); and then click the submit button.
 
-You should check the log and see if the result is as expected.
+"SUCCESS?" just shows whether your solution runs without any errors. It does not necessarily mean that you get a perfect score.
+**So please check the log and see if the result is as expected.**
 
 #### Tools
 
