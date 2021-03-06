@@ -297,7 +297,11 @@ Make sure you're capable of using the following development tools:
 - Ask questions on lab assignments in the dedicated streams ([example](https://cp-cs230.kaist.ac.kr/#narrow/stream/5-cs230-lab-linkedlistlab)).
     + Don't DM to the instructor or TAs.
     + Before asking a question, search for similar ones in Zulip and Google.
-    + Describe your question as detailed as possible.
+    + Describe your question as detailed as possible. It should include following things:
+      * Environment (OS, gcc, g++ version, and any other related program information). You can just say provided server if you use it without any changes.
+      * Command(s) that you used and the result. Any logs should be formatted in code. Refer to [this](https://zulip.com/help/format-your-message-using-markdown#code).
+      * Any directory or file changes you've made. If it is solution file, just describe which part of the code is modified.
+      * Googling result. Search before asking, and share the keyword used for searching and what you've learned from it.
     + Properly Name your question as the topic.
     + Read [this](https://cp-git.kaist.ac.kr/cs230/cs230#communication) for more instructions.
 
