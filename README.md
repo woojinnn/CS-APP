@@ -5,8 +5,8 @@
 - Instructor: [Jeehoon Kang](https://cp.kaist.ac.kr/jeehoon.kang)
 - TA: [Kyeongmin Cho](https://cp.kaist.ac.kr/kyeongmin.cho) (head), [Sungsoo Han](https://cp.kaist.ac.kr/sungsoo.han), [Sunghwan Shim](https://cp.kaist.ac.kr/sunghwan.shim), [Jaemin Choi](https://cp.kaist.ac.kr/jaemin.choi), [Jaehwang Jung](https://cp.kaist.ac.kr/jaehwang.jung), Chanyoung Chung
   See [below](#communication) for communication policy.
-    + Office Hour: TBA. See [below](#communication) for office hour policy.
-- Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (announced in [chat](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement))
+- Lecture Time & Place: Mon & Wed 10:30am-11:45am, ~~Terman Hall, Bldg. E11~~ Online (announced in [chat](https://cp-cs230.kaist.ac.kr/#narrow/stream/3-cs230-announcement))
+- Office Hour Time & Place: Tue & Fri 4:00pm-4:30pm, Online.  It is not required, but if you want to come, do so by 4:05pm.  See [below](#communication) for office hour policy.
 - Course Website: https://cp-git.kaist.ac.kr/cs230/cs230
 - Chat Website: https://cp-cs230.kaist.ac.kr
 - Lab Submission website: https://gg.kaist.ac.kr/course/7
