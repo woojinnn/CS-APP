@@ -1,8 +1,6 @@
 /*
  * CS:APP Data Lab
  *
- * Woojin Lee, KAIST CS/EE Undergrad.
- *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
