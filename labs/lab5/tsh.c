@@ -222,6 +222,8 @@ int parseline(const char *cmdline, char **argv) {
 /*
  * builtin_cmd - If the user has typed a built-in command then execute
  *    it immediately.
+ * Recognizes and interprets the built-in commands: quit, fg, bg, and jobs.
+ * [25 lines]
  */
 int builtin_cmd(char **argv) {
   return 0; /* not a builtin command */
@@ -229,6 +231,8 @@ int builtin_cmd(char **argv) {
 
 /*
  * do_bgfg - Execute the builtin bg and fg commands
+ * Implements the bg and fg built-in commands.
+ * [50 lines]
  */
 void do_bgfg(char **argv) {
   return;
@@ -236,6 +240,8 @@ void do_bgfg(char **argv) {
 
 /*
  * waitfg - Block until process pid is no longer the foreground process
+ * Waits for a foreground job to complete.
+ * [20 lines]
  */
 void waitfg(pid_t pid) {
   return;
@@ -251,6 +257,8 @@ void waitfg(pid_t pid) {
  *     received a SIGSTOP or SIGTSTP signal. The handler reaps all
  *     available zombie children, but doesn't wait for any other
  *     currently running children to terminate.
+ * Catches SIGCHILD signals.
+ * [80 lines]
  */
 void sigchld_handler(int sig) {
   return;
@@ -260,6 +268,8 @@ void sigchld_handler(int sig) {
  * sigint_handler - The kernel sends a SIGINT to the shell whenver the
  *    user types ctrl-c at the keyboard.  Catch it and send it along
  *    to the foreground job.
+ * Catches SIGINT (ctrl-c) signals.
+ * [15 lines]
  */
 void sigint_handler(int sig) {
   return;
@@ -269,6 +279,8 @@ void sigint_handler(int sig) {
  * sigtstp_handler - The kernel sends a SIGTSTP to the shell whenever
  *     the user types ctrl-z at the keyboard. Catch it and suspend the
  *     foreground job by sending it a SIGTSTP.
+ * Catches SIGTSTP (ctrl-z) signals.
+ * [15 lines]
  */
 void sigtstp_handler(int sig) {
   return;

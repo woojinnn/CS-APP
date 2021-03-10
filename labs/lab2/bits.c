@@ -1,7 +1,7 @@
 /*
  * CS:APP Data Lab
  *
- * <Please put your name and userid here>
+ * Woojin Lee, KAIST CS/EE Undergrad.
  *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -182,7 +182,7 @@ NOTES:
  *   Rating: 2
  */
 int allEvenBits(int x) {
-  return 2;
+  return !(((0x55555555) & x) ^ (0x55555555));
 }
 /*
  * bitOr - x|y using only ~ and &
@@ -192,7 +192,7 @@ int allEvenBits(int x) {
  *   Rating: 1
  */
 int bitOr(int x, int y) {
-  return 2;
+  return ~(~x & ~y);
 }
 /*
  * conditional - same as x ? y : z
@@ -202,7 +202,7 @@ int bitOr(int x, int y) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  return ((~(~(!x) + 1)) & y) | ((~(!x) + 1) & z);
 }
 /*
  * dividePower2 - Compute x/(2^n), for 0 <= n <= 30
@@ -270,7 +270,7 @@ int isAsciiDigit(int x) {
  *   Rating: 2
  */
 int isPositive(int x) {
-  return 2;
+  return !!(((0x8000) & x) ^ 0x8000);
 }
 /*
  * isUmax - returns 1 if x is the maximum unsigned integer,
@@ -280,7 +280,7 @@ int isPositive(int x) {
  *   Rating: 1
  */
 unsigned isUmax(unsigned x) {
-  return 2;
+  return !((0x8000 | x) ^ 0x8000);
 }
 /*
  * logicalNeg - implement the ! operator, using all of
