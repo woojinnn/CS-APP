@@ -12,8 +12,8 @@ CFORMAT=clang-format-10
 
 all: list.o test format grade
 
-test: list.o test.c
-	$(CXX) $(CXXFLAGS) -o test list.o test.c $(LDFLAGS)
+test: list.o test.cpp
+	$(CXX) $(CXXFLAGS) -o test list.o test.cpp $(LDFLAGS)
 
 test_run: test
 	@./grade.sh
