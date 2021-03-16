@@ -180,8 +180,9 @@ NOTES:
  *   Rating: 2
  */
 int allEvenBits(int x) {
-  return !(((0x55555555) & x) ^ (0x55555555));
+  return !(((x & (x >> 8) & (x >> 16) & (x >> 24)) & 0x55) ^ 0x55);
 }
+
 /*
  * bitOr - x|y using only ~ and &
  *   Example: bitOr(6, 5) = 7
@@ -200,7 +201,9 @@ int bitOr(int x, int y) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return ((~(~(!x) + 1)) & y) | ((~(!x) + 1) & z);
+  int checker = ~0 + !x;
+  // checker: 0x00..00 if x=0, 0xFF..FF if x!=0
+  return ((~checker) & z) | (checker & y);
 }
 /*
  * dividePower2 - Compute x/(2^n), for 0 <= n <= 30
@@ -211,7 +214,15 @@ int conditional(int x, int y, int z) {
  *   Rating: 2
  */
 int dividePower2(int x, int n) {
-  return 2;
+  // x>>31 == 1 -> neg -> rounding up
+  // x>>31 == 0 -> pos -> rounding down
+  // rounding down: x >> n
+  // rounding up: (x + (1 << k) -1) >> k
+  // (x<0 ? x+(1<<k)-1 : x)>>k
+  int sign = !!(x >> 31);
+  int roundingup = (x + (1 << n) + ~0);
+  int toshift = x + (sign << n) + ~sign + 1;
+  return toshift >> n;
 }
 /*
  * floatIsEqual - Compute f == g for floating point arguments f and g.
@@ -258,7 +269,12 @@ int increment(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  // 0x30 = 48, 0x39 = 57
+  // x-48 >= 0, 57-x>=0
+  // check MSB
+  int over48 = (x + ~48 + 1) >> 31; // x-48>=0
+  int under57 = (58 + ~x) >> 31;    // 57-x>=0
+  return !(over48 | under57);
 }
 /*
  * isPositive - return 1 if x > 0, return 0 otherwise
@@ -268,7 +284,7 @@ int isAsciiDigit(int x) {
  *   Rating: 2
  */
 int isPositive(int x) {
-  return !!(((0x8000) & x) ^ 0x8000);
+  return !!(~(x >> 31) + !x);
 }
 /*
  * isUmax - returns 1 if x is the maximum unsigned integer,
@@ -301,7 +317,7 @@ int logicalNeg(int x) {
  *   Rating: 3
  */
 int replaceByte(int x, int n, int c) {
-  return 2;
+  return (c << (n << 3)) | (x & (~0 + ~(0xFF << (n << 3)) + 1));
 }
 /*
  * unsignedSatAdd - adds two numbers but when overflow occurs,
@@ -324,5 +340,5 @@ unsigned unsignedSatAdd(unsigned x, unsigned y) {
  *  Rating: 1
  */
 int upperBits(int n) {
-  return 2;
+  return ((!!n) << 31) >> (n + ~0);
 }
