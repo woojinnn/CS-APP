@@ -294,7 +294,7 @@ int isPositive(int x) {
  *   Rating: 1
  */
 unsigned isUmax(unsigned x) {
-  return !((0x8000 | x) ^ 0x8000);
+  return !(~0 ^ x);
 }
 /*
  * logicalNeg - implement the ! operator, using all of
@@ -304,8 +304,19 @@ unsigned isUmax(unsigned x) {
  *   Max ops: 12
  *   Rating: 4
  */
+// #include <stdio.h>
+// int logicalNeg(int x);
+// int main(void){
+//     printf("%d\n", logicalNeg(0x80000000));
+// }
 int logicalNeg(int x) {
-  return 2;
+  int extractto16 = x | (x << 16);
+  int extractto8 = extractto16 | (extractto16 << 8);
+  int extractto4 = extractto8 | (extractto8 << 4);
+  int extractto2 = extractto4 | (extractto4 << 2);
+  int extractto1 = extractto2 | (extractto2 << 1);
+  int check = extractto1 >> 31;
+  return check + 1;
 }
 /*
  * replaceByte(x,n,c) - Replace byte n in x with c
