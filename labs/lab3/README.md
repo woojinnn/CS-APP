@@ -8,7 +8,7 @@ There are too many bombs for us to deal with, so we are giving each student a bo
 
 ## Step1: Get Your Bomb
 
-You can obtain your bomb in provided server. It is in `$HOME/handouts` directory of your provided server. Give the command: `tar -xvf bomblab.tar` to extract file.
+You can obtain your bomb in the provided server. It is in `$HOME/handouts` directory of your provided server. Give the command: `tar -xvf ~/handouts/bomblab.tar` to extract file.
 
 This will create a directory called `./bomblab` with the following files:
 
