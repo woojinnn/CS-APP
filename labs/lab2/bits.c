@@ -220,7 +220,6 @@ int dividePower2(int x, int n) {
   // rounding up: (x + (1 << k) -1) >> k
   // (x<0 ? x+(1<<k)-1 : x)>>k
   int sign = !!(x >> 31);
-  int roundingup = (x + (1 << n) + ~0);
   int toshift = x + (sign << n) + ~sign + 1;
   return toshift >> n;
 }
@@ -236,7 +235,24 @@ int dividePower2(int x, int n) {
  *   Rating: 2
  */
 int floatIsEqual(unsigned uf, unsigned ug) {
-  return 2;
+  int mask = ~(1 << 31); // 0111...111
+  unsigned f = mask & uf;
+  unsigned g = mask & ug;
+  // +0 and -0
+  if ((f | g) == 0) {
+    return 1;
+  }
+
+  // NaN
+  if (!(((f >> 23) & (g >> 23)) ^ 0xFF)) { // exp check
+    unsigned fracf = f << 9;               // fraction of f
+    unsigned fracg = g << 9;               // fraction of g
+    if (!!(fracf | fracg)) {               // if both are not infinity
+      return 0;
+    }
+  }
+
+  return !(uf ^ ug);
 }
 /*
  * floatUnsigned2Float - Return bit-level equivalent of expression (float) u
@@ -247,8 +263,42 @@ int floatIsEqual(unsigned uf, unsigned ug) {
  *   Max ops: 30
  *   Rating: 4
  */
+// #include <stdio.h>
+// unsigned floatUnsigned2Float(unsigned u);
+// int main(void)
+// {
+//     printf("%d\n", floatUnsigned2Float(0xFFFFFFFF));
+//     printf("%d\n", floatUnsigned2Float(0x0000000F));
+// }
+
 unsigned floatUnsigned2Float(unsigned u) {
-  return 2;
+  // if (u == 0)
+  //   return 0; // 0
+
+  // // Now always normalized form, s=0
+  // unsigned exponent = 31;
+  // unsigned frac = 0;
+
+  // while ((u & (1 << exponent)) == 0) {
+  // while (!(u & (1 << exponent))) {
+  //   exponent = exponent + ~1 + 1;
+  // }
+  // // printf("exponent: %d\n", exponent);
+
+  // frac = u & ~(1 << exponent);
+  // // printf("frac: %#x\n", frac);
+
+  // if (exponent >= 24) {
+  //   frac = frac >> (exponent + ~23 + 1);
+  // } else {
+  //   frac = frac << (23 + ~exponent + 1);
+  // }
+  // // printf("frac after rounding: %#x\n", frac);
+
+  // exponent = exponent + 127;
+
+  // return (exponent << 23) + frac;
+  return 0;
 }
 /*
  * increment - Compute x+1 without using + and ~
@@ -304,11 +354,6 @@ unsigned isUmax(unsigned x) {
  *   Max ops: 12
  *   Rating: 4
  */
-// #include <stdio.h>
-// int logicalNeg(int x);
-// int main(void){
-//     printf("%d\n", logicalNeg(0x80000000));
-// }
 int logicalNeg(int x) {
   int extractto16 = x | (x << 16);
   int extractto8 = extractto16 | (extractto16 << 8);
@@ -340,7 +385,15 @@ int replaceByte(int x, int n, int c) {
  *   Rating: 4
  */
 unsigned unsignedSatAdd(unsigned x, unsigned y) {
-  return 2;
+  int mask = ~(1 << 31); // 0111...111
+  int sumforcarry = (x & mask) + (y & mask);
+
+  int carry = !(sumforcarry >> 31); // 1 if carry
+  int msbx = !(x >> 31);
+  int msby = !(y >> 31);
+  int overflow = !((msbx + msby + carry) >> 1);
+  int checker = ~0 + !overflow;
+  return ((~checker) & (x + y)) | (checker & ~0);
 }
 /*
  * upperBits - pads n upper bits with 1's
