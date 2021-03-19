@@ -268,7 +268,14 @@ unsigned floatUnsigned2Float(unsigned u) {
   unsigned exponent = 31U;
   unsigned frac = 0U;
 
-  printf("input: %u\n", u);
+  unsigned shift23;
+  unsigned shift24;
+  unsigned frac1;
+  unsigned frac2;
+  unsigned frac3;
+  // unsigned check1;
+  // unsigned check2;
+
   if (!u) {
     return 0;
   }
@@ -276,32 +283,30 @@ unsigned floatUnsigned2Float(unsigned u) {
   // Now always normalized form, s=0
   // calculate exponent
   while (!(u & (1 << exponent))) {
-    exponent = exponent + ~0; // exponent--;
+    exponent += ~0; // exponent--;
   }
-  // printf("exponent: %d\n", exponent);
-
-  frac = u & ~(1 << exponent);
-  // printf("frac: %#x\n", frac);
 
   if (exponent >= 24) {
-    // frac = frac >> (exponent - 23);
-    if (!(frac & (1 << (exponent - 24))))
-      frac = frac >> (exponent - 23);
-    else { // round up
-      frac = (frac >> (exponent - 23)) + 1;
+    // rounding
+    shift23 = exponent - 23;
+    shift24 = exponent - 24;
+
+    frac1 = u & (1 << shift23);
+    frac2 = u & (1 << shift24);
+    frac3 = u & ((1 << shift24) - 1);
+
+    frac = u >> (shift23);
+    if ((frac1 && frac2) || (frac2 && frac3)) {
+      frac++;
     }
   } else {
-    frac = frac << (23 - exponent);
+    frac = u << (23 - exponent);
   }
-  // printf("frac after rounding: %#x\n", frac);
+
+  frac = frac & ((~0) + (1 << 23));
 
   // Since it's normalized form, we should add bias 127
-  exponent = exponent + 127;
-  // printf("modified exponent: %d, %#x\n", exponent, exponent);
-
-  printf("myvalue: %u\n", (exponent << 23) | frac);
-  printf("solution: %u\n", (float)u);
-  return (exponent << 23) | frac;
+  return ((exponent + 127) << 23) | frac;
 }
 /*
  * increment - Compute x+1 without using + and ~
