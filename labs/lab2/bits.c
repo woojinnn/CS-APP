@@ -316,12 +316,11 @@ unsigned floatUnsigned2Float(unsigned u) {
  *   Rating: 4
  */
 int increment(int x) {
-  int m = 1;
-  while (x & m) {
-    x = x ^ m;
-    m = m << 1;
-  }
-  x = x ^ m;
+  int tmp = 1;
+  do {
+    x = x ^ tmp;
+    tmp = tmp << 1;
+  } while (x & tmp);
   return x;
 }
 /*
