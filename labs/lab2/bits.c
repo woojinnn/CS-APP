@@ -316,7 +316,13 @@ unsigned floatUnsigned2Float(unsigned u) {
  *   Rating: 4
  */
 int increment(int x) {
-  return 2;
+  int m = 1;
+  while (x & m) {
+    x = x ^ m;
+    m = m << 1;
+  }
+  x = x ^ m;
+  return x;
 }
 /*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters
