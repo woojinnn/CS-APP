@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 int foo(int x) {
   printf("foo(%d)\n", x);

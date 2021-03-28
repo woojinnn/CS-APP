@@ -1,4 +1,5 @@
-// `CFLAGS = -Wall -Wextra -Wpedantic -Wconversion` in `Makefile` to produce warnings
+// `CFLAGS = -Wall -Wextra -Wpedantic -Wconversion` in `Makefile` to produce
+// warnings
 
 #include <stdio.h>
 
