@@ -88,7 +88,7 @@ Both *CTARGET* and *RTARGET* take several different command line arguments:
 * `-h`: Print list of possible command line arguments
 * `-i` `FILE`: Supply input from a file, rather than from standard input
 
-Your exploit strings will typically contain byte values that do not correspond to the ASCII values for printing characters. The program *HEX2RAW* will enable you to generate these raw strings. See [Using HEX2RAW](https://cp-git.kaist.ac.kr/cs230/cs230-lab-attacklab#using-hex2raw) for more information on how to use *HEX2RAW*.
+Your exploit strings will typically contain byte values that do not correspond to the ASCII values for printing characters. The program *HEX2RAW* will enable you to generate these raw strings. See [Using HEX2RAW](https://cp-git.kaist.ac.kr/cs230/cs230/-/tree/main/labs/lab4#using-hex2raw) for more information on how to use *HEX2RAW*.
 
 ### Important points
 
@@ -176,7 +176,7 @@ You will want to position a byte representation of the address of your injected 
 * Recall that the first argument to a function is passed in register `%rdi`.
 * Your injected code should set the register to your cookie, and then use a `ret` instruction to transfer control to the first instruction in `touch2`.
 * Do not attempt to use `jmp` or `call` instructions in your exploit code. The encodings of destination addresses for these instructions are difficult to formulate. Use `ret` instructions for all transfers of control, even when you are not returning from a `call`.
-* See [Generating Byte Codes](https://cp-git.kaist.ac.kr/cs230/cs230-lab-attacklab#generating-byte-codes) on how to use tools to generate the byte-level representations of instruction sequences.
+* See [Generating Byte Codes](https://cp-git.kaist.ac.kr/cs230/cs230/-/tree/main/labs/lab4#generating-byte-codes) on how to use tools to generate the byte-level representations of instruction sequences.
 
 ### Level 3
 
