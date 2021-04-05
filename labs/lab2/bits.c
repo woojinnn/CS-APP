@@ -202,7 +202,7 @@ int bitOr(int x, int y) {
  */
 int conditional(int x, int y, int z) {
   int checker = ~0 + !x;
-  // checker: 0x00..00 if x=0, 0xFF..FF if x!=0
+  // checker: 0x00..00 if x==0, 0xFF..FF if x!=0
   return ((~checker) & z) | (checker & y);
 }
 /*
@@ -315,13 +315,18 @@ unsigned floatUnsigned2Float(unsigned u) {
  *   Max ops: 30
  *   Rating: 4
  */
+// int tmp = 1;
+
+// while (x & tmp) {
+//   x = x ^ tmp;
+//   tmp = tmp << 1;
+// }
+
+// x = x ^ tmp;
+// return x;
+
 int increment(int x) {
-  int tmp = 1;
-  do {
-    x = x ^ tmp;
-    tmp = tmp << 1;
-  } while (x & tmp);
-  return x;
+  return 0;
 }
 /*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters
