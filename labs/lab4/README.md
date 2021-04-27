@@ -337,15 +337,21 @@ unix> cat [your_RTARGET_exploit_file] | ./hex2raw | ./rtarget
 Go to [the submission website](https://gg.kaist.ac.kr/assignment/29/) and submit the text files that can exploit your targets.
 See [this](https://cp-git.kaist.ac.kr/cs230/cs230#handin-instructions) for more details.
 
-You should submit 5 files:
+You should submit 1 zip file including 5 files:
 
-* `ctargetl1`: exploit string for Part 1, level 1
-* `ctargetl2`: exploit string for Part 1, level 2
-* `ctargetl3`: exploit string for Part 1, level 3
-* `rtargetl2`: exploit string for Part 2, level 2
-* `rtargetl3`: exploit string for Part 2, level 3
+* `ctarget.l1`: exploit string for Part 1, level 1
+* `ctarget.l2`: exploit string for Part 1, level 2
+* `ctarget.l3`: exploit string for Part 1, level 3
+* `rtarget.l2`: exploit string for Part 2, level 2
+* `rtarget.l3`: exploit string for Part 2, level 3
 
-Make sure that you submit correct file for each phase. If your file contains answer for incorrect phase, it will be considered wrong.  
+Make sure that each solution file has correct name. If your file contains answer for incorrect phase, it will be considered wrong.
+
+For zipping files, use following command:
+
+```bash
+unix> zip -r solution.zip ctarget.l1 ctarget.l2 ctarget.l3 rtarget.l2 rtarget.l3
+```
 
 ## Appendix
 
