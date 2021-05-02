@@ -26,7 +26,7 @@ make clean >/dev/null 2>&1 && make build || echo "ERROR: tsh.c did not compile."
 echo "Correctness Tests"
 echo ""
 for test in ${tests[@]}; do
-    timeout 60 ./checktsh.pl -e -t $test
+    ./checktsh.pl -e -t $test
     if [ $? -eq 0 ]; then
         score=$((score + point))
     fi
