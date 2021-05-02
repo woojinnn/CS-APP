@@ -1,5 +1,7 @@
-double x;
+float x;
+double y;
 
-void set_x() {
-  x = 4.2;
+void set_xy() {
+  x = 4.2f;
+  y = 666.0;
 }

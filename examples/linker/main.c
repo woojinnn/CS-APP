@@ -1,8 +1,8 @@
-void set_x();
-void print_x();
+void set_xy();
+void print_xy();
 
 int main() {
-  set_x();
-  print_x();
+  set_xy();
+  print_xy();
   return 0;
 }
