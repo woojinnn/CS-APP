@@ -1,4 +1,7 @@
 *
-!/.gitignore
-!/Makefile
+!.gitignore
+!Makefile
+!README.md
 !*.c
+
+!/linker
