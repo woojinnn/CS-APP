@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
   Signal(SIGCHLD, sigchld_handler); /* Terminated or stopped child */
 
   /* This one provides a clean way to kill the shell */
-  Signal(SIGQUIT, sigquit_handler);
+  Signal(SIGQUIT, sigquit_handler); /* ctrl-\ */
 
   /* Initialize the job list */
   initjobs(jobs);
@@ -150,6 +150,14 @@ int main(int argc, char **argv) {
   exit(0); /* control never reaches here */
 }
 
+pid_t Fork(void) {
+  pid_t pid;
+
+  if ((pid = fork()) < 0)
+    unix_error("Fork error");
+  return pid;
+}
+
 /*
  * eval - Evaluate the command line that the user has just typed in
  *
@@ -162,6 +170,46 @@ int main(int argc, char **argv) {
  * when we type ctrl-c (ctrl-z) at the keyboard.
  */
 void eval(char *cmdline) {
+  char *argv[MAXARGS]; // argument list execve()
+  char buf[MAXLINE];   // holds modified command line
+  int bg;              // Should the job run in bg or fg?
+  pid_t pid;           // Process id
+  sigset_t mask;
+
+  strcpy(buf, cmdline);
+  bg = parseline(buf, argv);
+  if (argv[0] == NULL)
+    return; // ignore empty lines
+
+  if (!builtin_cmd(argv)) {
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
+
+    if ((pid = Fork()) == 0) { // child runs user job
+      sigprocmask(SIG_UNBLOCK, &mask, NULL);
+      if (setpgid(0, 0) < 0) {
+        unix_error("setpgid failed at eval\n");
+      }
+
+      if (execve(argv[0], argv, environ) < 0) {
+        printf("%s: Command not found.\n", argv[0]);
+        exit(0);
+      }
+      exit(0);
+    }
+    // Parent waits for foreground job to terminate
+    if (!bg) { // foreground
+      addjob(jobs, pid, FG, cmdline);
+      sigprocmask(SIG_UNBLOCK, &mask, NULL);
+      waitfg(pid);
+    } else { // background
+      addjob(jobs, pid, BG, cmdline);
+      sigprocmask(SIG_UNBLOCK, &mask, NULL);
+      printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
+    }
+  }
+
   return;
 }
 
@@ -224,8 +272,36 @@ int parseline(const char *cmdline, char **argv) {
  *    it immediately.
  * Recognizes and interprets the built-in commands: quit, fg, bg, and jobs.
  * [25 lines]
+ * quit: terminates the shell.
+ * jobs: lists all background jobs.
+ * bg <job>: restarts <job> by sending it a SIGCONT signal, and then runs it in
+ the background.
+ *          The <job> argument can be either a PID or a JID.
+ * fg <job>: restarts <job> by sending it a SIGCONT signal, and then runs it in
+ the foreground. The <job> argument can be either a PID or a JID.
  */
 int builtin_cmd(char **argv) {
+  /* book pg 791 */
+  sigset_t mask, prev;
+  sigfillset(&mask);
+
+  if (!strcmp(argv[0], "quit"))
+    exit(0);
+  if (!strcmp(argv[0], "fg")) {
+    do_bgfg(argv);
+    return 1;
+  }
+  if (!strcmp(argv[0], "bg")) {
+    do_bgfg(argv);
+    return 1;
+  }
+  if (!strcmp(argv[0], "jobs")) {
+    sigprocmask(SIG_BLOCK, &mask, &prev);
+    listjobs(jobs);
+    sigprocmask(SIG_SETMASK, &prev, NULL);
+    return 1;
+  }
+
   return 0; /* not a builtin command */
 }
 
@@ -233,8 +309,52 @@ int builtin_cmd(char **argv) {
  * do_bgfg - Execute the builtin bg and fg commands
  * Implements the bg and fg built-in commands.
  * [50 lines]
+ * bg <job>: restarts <job> by sending it a SIGCONT signal, and then runs it in
+ the background. The <job> argument can be either a PID or a JID.
+ * fg <job>: restarts <job> by sending it a SIGCONT signal, and then runs it in
+ the foreground. The <job> argument can be either a PID or a JID.
  */
+
 void do_bgfg(char **argv) {
+
+  struct job_t *job = NULL;
+  pid_t pid;
+  if ((argv[1] == NULL) && (!strcmp(argv[0], "bg") || !strcmp(argv[0], "fg"))) {
+    printf("%s command requires PID or %%jobid argument\n", argv[0]);
+    return;
+  }
+
+  if (argv[1][0] == '%') { // jid
+    job = getjobjid(jobs, atoi(&argv[1][1]));
+    if (job == NULL) {
+      printf("%s: No such job\n", argv[1]);
+      return;
+    } else {
+      pid = job->pid;
+    }
+  } else if (isdigit(argv[1][0])) { // pid
+    pid = atoi(&argv[1][0]);
+    job = getjobpid(jobs, atoi(&argv[1][0]));
+    if (job == NULL) {
+      printf("%s: No such process\n", argv[1]);
+      return;
+    }
+  } else {
+    printf("%s: argument must be PID or %%jobid\n", argv[0]);
+    return;
+  }
+
+  kill(-pid, SIGCONT);
+
+  if (!strcmp(argv[0], "bg")) {
+    if (job->state == ST) {
+      printf("[%d] (%d) %s", job->jid, job->pid, job->cmdline);
+      job->state = BG;
+    }
+  } else if (!strcmp(argv[0], "fg")) {
+    job->state = FG;
+    waitfg(job->pid);
+  }
   return;
 }
 
@@ -244,6 +364,10 @@ void do_bgfg(char **argv) {
  * [20 lines]
  */
 void waitfg(pid_t pid) {
+  struct job_t *job;
+  job = getjobpid(jobs, pid);
+  while (job->state == FG)
+    sleep(1);
   return;
 }
 
@@ -254,24 +378,51 @@ void waitfg(pid_t pid) {
 /*
  * sigchld_handler - The kernel sends a SIGCHLD to the shell whenever
  *     a child job terminates (becomes a zombie), or stops because it
- *     received a SIGSTOP or SIGTSTP signal. The handler reaps all
+ *     received a SIGSTOP or SIGTSTP signal.The handler reaps all
  *     available zombie children, but doesn't wait for any other
  *     currently running children to terminate.
  * Catches SIGCHILD signals.
  * [80 lines]
  */
 void sigchld_handler(int sig) {
+  int legacy_errno = errno;
+  pid_t pid;
+  int jid;
+  int stat;
+
+  while ((pid = waitpid(fgpid(jobs), &stat, WNOHANG | WUNTRACED)) > 0) {
+    jid = pid2jid(pid);
+    if (WIFSTOPPED(stat)) {
+      getjobpid(jobs, pid)->state = ST;
+      jid = pid2jid(pid);
+      printf("Job [%d] (%d) Stopped by signal %d\n", jid, pid, WSTOPSIG(stat));
+    } else if (WIFSIGNALED(stat)) {
+      printf("Job [%d] (%d) terminated by signal %d\n", jid, pid,
+             WTERMSIG(stat));
+      deletejob(jobs, pid);
+    } else if (WIFEXITED(stat)) {
+      deletejob(jobs, pid);
+    }
+  }
+  errno = legacy_errno;
   return;
 }
 
 /*
  * sigint_handler - The kernel sends a SIGINT to the shell whenver the
- *    user types ctrl-c at the keyboard.  Catch it and send it along
+ *    user types ctrl-c at the keyboard. Catch it and send it along
  *    to the foreground job.
  * Catches SIGINT (ctrl-c) signals.
  * [15 lines]
  */
 void sigint_handler(int sig) {
+  int legacy_errno = errno;
+  pid_t pid = fgpid(jobs);
+
+  if (kill(-pid, SIGINT) < 0) {
+    unix_error("error while handling Ctrl-c\n");
+  }
+  errno = legacy_errno;
   return;
 }
 
@@ -283,6 +434,12 @@ void sigint_handler(int sig) {
  * [15 lines]
  */
 void sigtstp_handler(int sig) {
+  int legacy_errno = errno;
+  pid_t pid = fgpid(jobs);
+  if (kill(-pid, SIGTSTP) < 0) {
+    unix_error("error while handling Ctrl-c\n");
+  }
+  errno = legacy_errno;
   return;
 }
 
