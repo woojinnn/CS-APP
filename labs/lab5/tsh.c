@@ -193,7 +193,7 @@ void eval(char *cmdline) {
       }
 
       if (execve(argv[0], argv, environ) < 0) {
-        printf("%s: Command not found.\n", argv[0]);
+        printf("%s: Command not found\n", argv[0]);
         exit(0);
       }
       exit(0);
@@ -336,11 +336,11 @@ void do_bgfg(char **argv) {
     pid = atoi(&argv[1][0]);
     job = getjobpid(jobs, atoi(&argv[1][0]));
     if (job == NULL) {
-      printf("%s: No such process\n", argv[1]);
+      printf("(%s): No such process\n", argv[1]);
       return;
     }
   } else {
-    printf("%s: argument must be PID or %%jobid\n", argv[0]);
+    printf("%s: argument must be a PID or %%jobid\n", argv[0]);
     return;
   }
 
@@ -395,7 +395,7 @@ void sigchld_handler(int sig) {
     if (WIFSTOPPED(stat)) {
       getjobpid(jobs, pid)->state = ST;
       jid = pid2jid(pid);
-      printf("Job [%d] (%d) Stopped by signal %d\n", jid, pid, WSTOPSIG(stat));
+      printf("Job [%d] (%d) stopped by signal %d\n", jid, pid, WSTOPSIG(stat));
     } else if (WIFSIGNALED(stat)) {
       printf("Job [%d] (%d) terminated by signal %d\n", jid, pid,
              WTERMSIG(stat));
