@@ -10,8 +10,8 @@ TSTP
 /bin/echo tsh> jobs
 jobs
 
-/bin/echo tsh> /bin/ps a
-/bin/ps a
+/bin/echo tsh> /bin/ps o pid,tty,stat,time,cmd
+/bin/ps o pid,tty,stat,time,cmd
 
 
 
