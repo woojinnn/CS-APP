@@ -21,6 +21,7 @@
 /* Basic constants and macros for manipualting the free list */
 #define WSIZE 4
 #define DSIZE 8
+#define FREESIZE 16
 #define CHUNKSIZE (1 << 12)
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
@@ -38,6 +39,9 @@
 #define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE(((char *)(bp)-WSIZE)))
 #define PREV_BLKP(bp) ((char *)(bp)-GET_SIZE(((char *)(bp)-DSIZE)))
 
+#define PREV_FREE(bp) (GET(bp))
+#define NEXT_FREE(bp) (GET((char *)bp + WSIZE))
+
 /* single word (4) or double word (8) alignment */
 #define ALIGNMENT 8
 
@@ -47,6 +51,7 @@
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 
 static char *heap_listp;
+static char *free_listp;
 
 static void *coalesce(void *bp) {
   size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
@@ -96,16 +101,23 @@ static void *extend_heap(size_t words) {
  * mm_init - initialize the malloc package.
  */
 int mm_init(void) {
-  if ((heap_listp = mem_sbrk(4 * WSIZE)) == (void *)-1)
+  if ((heap_listp = mem_sbrk(8 * WSIZE)) == (void *)-1)
     return -1;
 
   PUT(heap_listp, 0);
   PUT(heap_listp + (1 * WSIZE), PACK(DSIZE, 1));
   PUT(heap_listp + (2 * WSIZE), PACK(DSIZE, 1));
-  PUT(heap_listp + (3 * WSIZE), PACK(0, 1));
-  heap_listp += (2 * WSIZE);
 
-  if (extend_heap(CHUNKSIZE / WSIZE) == NULL)
+  PUT(heap_listp + (3 * WSIZE), PACK(FREESIZE, 1));
+  PUT(heap_listp + (4 * WSIZE), 0);
+  PUT(heap_listp + (5 * WSIZE), 0);
+  PUT(heap_listp + (6 * WSIZE), PACK(FREESIZE, 1));
+
+  PUT(heap_listp + (7 * WSIZE), PACK(0, 1));
+  heap_listp += (2 * WSIZE);
+  free_listp = heap_listp + (2 * WSIZE);
+
+  if (extend_heap(1 << 8) == NULL)
     return -1;
 
   return 0;
@@ -143,12 +155,12 @@ static void place(void *bp, size_t asize) {
 }
 
 void *mm_malloc(size_t size) {
+  if (size == 0)
+    return NULL;
+
   size_t asize;
   size_t extendsize;
   char *bp;
-
-  if (size == 0)
-    return NULL;
 
   if (size <= DSIZE)
     asize = 2 * DSIZE;
