@@ -51,6 +51,8 @@ static void delete_node(void *bp);
 static void insert_node(void *bp);
 
 static char *heap_listp;
+static char *free_listp_start = NULL;
+static char *free_listp_end = NULL;
 
 int mm_init(void) {
   if ((heap_listp = mem_sbrk(6 * WSIZE)) == (void *)-1)
@@ -65,6 +67,7 @@ int mm_init(void) {
 
   PUT(heap_listp + (5 * WSIZE), PACK(0, 1));
   heap_listp += (2 * WSIZE);
+  free_listp_start = heap_listp;
 
   if (extend_heap(CHUNKSIZE / WSIZE) == NULL)
     return -1;
@@ -114,6 +117,7 @@ void *mm_malloc(size_t size) {
 }
 
 void mm_free(void *bp) {
+
   size_t size = GET_SIZE(HDRP(bp));
 
   PUT(HDRP(bp), PACK(size, 0));
@@ -134,18 +138,23 @@ void *mm_realloc(void *bp, size_t size) {
   copySize = GET_SIZE(HDRP(old_dp));
   if (size < copySize)
     copySize = size;
+
   memcpy(new_dp, old_dp, copySize);
   mm_free(old_dp);
+
   return new_dp;
 }
 
 static void *find_fit(size_t asize) {
   void *bp;
 
-  for (bp = PREV_FREE(heap_listp); bp != NULL; bp = PREV_FREE(bp)) {
-    if (GET_SIZE(HDRP(bp)) >= asize)
+  // for (bp = PREV_FREE(heap_listp); bp != NULL; bp = PREV_FREE(bp))
+  for (bp = free_listp_start; bp != free_listp_end; bp = PREV_FREE(bp)) {
+    if (GET_SIZE(HDRP(bp)) >= asize) {
       return bp;
+    }
   }
+
   return NULL;
 }
 
@@ -171,6 +180,19 @@ static void place(void *bp, size_t asize) {
 }
 
 static void delete_node(void *bp) {
+  if (bp == free_listp_start && bp == free_listp_end) {
+    free_listp_start = NULL;
+    free_listp_end = NULL;
+  }
+
+  else if (bp == free_listp_start) {
+    free_listp_start = PREV_FREE(bp);
+    PUT_P(NEXTRP(free_listp_start), 0);
+  } else if (bp == free_listp_end) {
+    free_listp_end = NEXT_FREE(bp);
+    PUT_P(PREVRP(free_listp_end), 0);
+  }
+
   if (PREV_FREE(bp) != (char *)NULL)
     SET_NEXT(PREV_FREE(bp), NEXT_FREE(bp));
 
@@ -179,12 +201,28 @@ static void delete_node(void *bp) {
 }
 
 static void insert_node(void *bp) {
-  if (PREV_FREE(heap_listp) != (char *)NULL)
-    SET_NEXT(PREV_FREE(heap_listp), bp);
+  if (free_listp_start == NULL) {
+    PUT_P(PREVRP(bp), 0);
+    PUT_P(NEXTRP(bp), 0);
+    free_listp_start = bp;
+    free_listp_end = bp;
+    return;
+  }
 
-  PUT_P(PREVRP(bp), PREV_FREE(heap_listp));
-  PUT_P(NEXTRP(bp), heap_listp);
-  PUT_P(PREVRP(heap_listp), bp);
+  else {
+    PUT_P(PREVRP(bp), free_listp_start);
+    PUT_P(NEXTRP(bp), NULL);
+    PUT_P(NEXTRP(free_listp_start), bp);
+    free_listp_start = bp;
+    return;
+  }
+
+  // if (PREV_FREE(heap_listp) != (char *)NULL)
+  //   SET_NEXT(PREV_FREE(heap_listp), bp);
+
+  // PUT_P(PREVRP(bp), PREV_FREE(heap_listp));
+  // PUT_P(NEXTRP(bp), heap_listp);
+  // PUT_P(PREVRP(heap_listp), bp);
 }
 
 static void *coalesce(void *bp) {

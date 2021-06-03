@@ -483,6 +483,7 @@ static trace_t *read_trace(char *tracedir, char *filename) {
   index = 0;
   op_index = 0;
   while (fscanf(tracefile, "%s", type) != EOF) {
+    // printf("%d\n", op_index);
     switch (type[0]) {
     case 'a':
       fscanf(tracefile, "%u %u", &index, &size);
