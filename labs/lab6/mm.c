@@ -12,6 +12,7 @@
 #define CHUNKSIZE (1 << 12)
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
 
 #define PACK(size, alloc) ((size) | (alloc))
 
@@ -126,14 +127,20 @@ void mm_free(void *bp) {
 }
 
 void *mm_realloc(void *bp, size_t size) {
+  if (size == 0) {
+    mm_free(bp);
+    return NULL;
+  }
+  if(bp == NULL)
+      return NULL;
+
   void *old_dp = bp;
   void *new_dp;
   size_t copySize;
 
   new_dp = mm_malloc(size);
-
   if (new_dp == NULL)
-    return NULL;
+      return NULL;
 
   copySize = GET_SIZE(HDRP(old_dp));
   if (size < copySize)
@@ -216,13 +223,6 @@ static void insert_node(void *bp) {
     free_listp_start = bp;
     return;
   }
-
-  // if (PREV_FREE(heap_listp) != (char *)NULL)
-  //   SET_NEXT(PREV_FREE(heap_listp), bp);
-
-  // PUT_P(PREVRP(bp), PREV_FREE(heap_listp));
-  // PUT_P(NEXTRP(bp), heap_listp);
-  // PUT_P(PREVRP(heap_listp), bp);
 }
 
 static void *coalesce(void *bp) {
