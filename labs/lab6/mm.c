@@ -131,16 +131,43 @@ void *mm_realloc(void *bp, size_t size) {
     mm_free(bp);
     return NULL;
   }
-  if(bp == NULL)
-      return NULL;
+
+  if (bp == NULL) {
+    return mm_malloc(size);
+  }
 
   void *old_dp = bp;
   void *new_dp;
-  size_t copySize;
 
+  size_t bpSize = GET_SIZE(HDRP(bp));
+
+  if (bpSize >= size + DSIZE) {
+    if (bpSize - size - DSIZE >= 2 * DSIZE) {
+      if (size <= DSIZE)
+        size = 2 * DSIZE;
+      else
+        size = ALIGN(DSIZE + size);
+
+      if ((bpSize - size) > (2 * DSIZE)) {
+        PUT(HDRP(old_dp), PACK(size, 1));
+        PUT(FTRP(old_dp), PACK(size, 1));
+        old_dp = NEXT_BLKP(old_dp);
+        PUT(HDRP(old_dp), PACK(bpSize - size, 0));
+        PUT(FTRP(old_dp), PACK(bpSize - size, 0));
+        insert_node(old_dp);
+        coalesce(old_dp);
+        return old_dp;
+      }
+    } else
+      return bp;
+  }
+
+
+
+  size_t copySize;
   new_dp = mm_malloc(size);
   if (new_dp == NULL)
-      return NULL;
+    return NULL;
 
   copySize = GET_SIZE(HDRP(old_dp));
   if (size < copySize)
