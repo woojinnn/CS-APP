@@ -136,22 +136,26 @@ void *mm_realloc(void *bp, size_t size) {
     return mm_malloc(size);
   }
 
-  int prev_alloc = GET_ALLOC(HDRP(PREV_BLKP(bp)));
-  int next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
-  size_t prev_size = GET_SIZE(HDRP(PREV_BLKP(bp)));
-  size_t curr_size = GET_SIZE(HDRP(bp));
-  size_t next_size = GET_SIZE(HDRP(NEXT_BLKP(bp)));
   void *prev = PREV_BLKP(bp);
   void *next = NEXT_BLKP(bp);
+
+  int prev_alloc = GET_ALLOC(HDRP(prev));
+  int next_alloc = GET_ALLOC(HDRP(next));
+
+  size_t prev_size = GET_SIZE(HDRP(prev));
+  size_t curr_size = GET_SIZE(HDRP(bp));
+  size_t next_size = GET_SIZE(HDRP(next));
+
   void *tmp;
+
+  if (size <= DSIZE)
+    size = 2 * DSIZE;
+  else
+    size = ALIGN(DSIZE + size);
 
   // can accomodate within current block
   if (curr_size >= size + DSIZE) {
     if (curr_size - size - DSIZE >= 2 * DSIZE) {
-      if (size <= DSIZE)
-        size = 2 * DSIZE;
-      else
-        size = ALIGN(DSIZE + size);
 
       if ((curr_size - size) > (2 * DSIZE)) {
         PUT(HDRP(bp), PACK(size, 1));
@@ -168,10 +172,7 @@ void *mm_realloc(void *bp, size_t size) {
   else {
     if (next_alloc == 0 && (next_size + curr_size >= size + DSIZE)) {
       delete_node(next);
-      if (size <= DSIZE)
-        size = 2 * DSIZE;
-      else
-        size = ALIGN(size + DSIZE);
+
       if ((next_size + curr_size) < (size + 2 * DSIZE))
         size = curr_size + next_size;
 
@@ -189,10 +190,7 @@ void *mm_realloc(void *bp, size_t size) {
 
     else if (prev_alloc == 0 && (prev_size + curr_size >= size + DSIZE)) {
       delete_node(prev);
-      if (size <= DSIZE)
-        size = 2 * DSIZE;
-      else
-        size = ALIGN(size + DSIZE);
+
       if ((prev_size + curr_size) < (size + 2 * DSIZE))
         size = prev_size + curr_size;
 
@@ -214,10 +212,7 @@ void *mm_realloc(void *bp, size_t size) {
              prev_size + curr_size + next_size >= size + DSIZE) {
       delete_node(prev);
       delete_node(next);
-      if (size <= DSIZE)
-        size = 2 * DSIZE;
-      else
-        size = ALIGN(DSIZE + size);
+
       if ((prev_size + curr_size + next_size) < (size + 2 * DSIZE))
         size = prev_size + curr_size + next_size;
 
@@ -225,7 +220,6 @@ void *mm_realloc(void *bp, size_t size) {
       memmove(prev, bp, copysize);
       PUT(HDRP(prev), PACK(size, 1));
       PUT(FTRP(prev), PACK(size, 1));
-      assert(GET_SIZE(HDRP(prev)) == size);
 
       if ((prev_size + curr_size + next_size) >= (size + 2 * DSIZE)) {
         tmp = NEXT_BLKP(prev);
@@ -237,17 +231,37 @@ void *mm_realloc(void *bp, size_t size) {
     }
 
     else {
-      tmp = mm_malloc(size);
-      if (tmp == NULL)
+      size_t asize;
+      size_t extendsize;
+
+      if (size <= DSIZE)
+        asize = 2 * DSIZE;
+      else
+        asize = ALIGN(DSIZE + size);
+
+      if ((tmp = find_fit(asize)) != NULL) {
+        place(tmp, asize);
+        memcpy(tmp, bp, MIN(size, curr_size));
+        mm_free(bp);
+        return tmp;
+      }
+
+      extendsize = asize;
+      if ((tmp = extend_heap(extendsize / WSIZE)) == NULL)
         return NULL;
-
-      if (size < curr_size)
-        curr_size = size;
-
-      memcpy(tmp, bp, curr_size);
+      place(tmp, asize);
+      memcpy(tmp, bp, MIN(size, curr_size));
       mm_free(bp);
-
       return tmp;
+
+      // tmp = mm_malloc(size);
+      // if (tmp == NULL)
+      //   return NULL;
+
+      // memcpy(tmp, bp, MIN(size, curr_size));
+      // mm_free(bp);
+
+      // return tmp;
     }
   }
 }
@@ -255,7 +269,6 @@ void *mm_realloc(void *bp, size_t size) {
 static void *find_fit(size_t asize) {
   void *bp;
 
-  // for (bp = PREV_FREE(heap_listp); bp != NULL; bp = PREV_FREE(bp))
   for (bp = free_listp_start; bp != free_listp_end; bp = PREV_FREE(bp)) {
     if (GET_SIZE(HDRP(bp)) >= asize) {
       return bp;
