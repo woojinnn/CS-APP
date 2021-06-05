@@ -136,47 +136,138 @@ void *mm_realloc(void *bp, size_t size) {
     return mm_malloc(size);
   }
 
-  void *old_dp = bp;
-  void *new_dp;
+  int prev_alloc = GET_ALLOC(HDRP(PREV_BLKP(bp)));
+  int next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
+  size_t prev_size = GET_SIZE(HDRP(PREV_BLKP(bp)));
+  size_t curr_size = GET_SIZE(HDRP(bp));
+  size_t next_size = GET_SIZE(HDRP(NEXT_BLKP(bp)));
+  void *prev = PREV_BLKP(bp);
+  void *next = NEXT_BLKP(bp);
+  void *tmp;
 
-  size_t bpSize = GET_SIZE(HDRP(bp));
-
-  if (bpSize >= size + DSIZE) {
-    if (bpSize - size - DSIZE >= 2 * DSIZE) {
+  // can accomodate within current block
+  if (curr_size >= size + DSIZE) {
+    if (curr_size - size - DSIZE >= 2 * DSIZE) {
       if (size <= DSIZE)
         size = 2 * DSIZE;
       else
         size = ALIGN(DSIZE + size);
 
-      if ((bpSize - size) > (2 * DSIZE)) {
-        PUT(HDRP(old_dp), PACK(size, 1));
-        PUT(FTRP(old_dp), PACK(size, 1));
-        old_dp = NEXT_BLKP(old_dp);
-        PUT(HDRP(old_dp), PACK(bpSize - size, 0));
-        PUT(FTRP(old_dp), PACK(bpSize - size, 0));
-        insert_node(old_dp);
-        coalesce(old_dp);
-        return old_dp;
+      if ((curr_size - size) > (2 * DSIZE)) {
+        PUT(HDRP(bp), PACK(size, 1));
+        PUT(FTRP(bp), PACK(size, 1));
+        PUT(HDRP(next), PACK(curr_size - size, 0));
+        PUT(FTRP(next), PACK(curr_size - size, 0));
+        coalesce(next);
+        return bp;
       }
-    } else
-      return bp;
+    }
+    return bp;
   }
 
+  else {
+    if (next_alloc == 0 && (next_size + curr_size >= size + DSIZE)) {
+      delete_node(next);
+      if (size <= DSIZE)
+        size = 2 * DSIZE;
+      else
+        size = ALIGN(size + DSIZE);
+      if ((next_size + curr_size) < (size + 2 * DSIZE))
+        size = curr_size + next_size;
 
+      PUT_P(HDRP(bp), PACK(size, 1));
+      PUT_P(FTRP(bp), PACK(size, 1));
 
-  size_t copySize;
-  new_dp = mm_malloc(size);
-  if (new_dp == NULL)
-    return NULL;
+      if ((next_size + curr_size) >= (size + 2 * DSIZE)) {
+        tmp = NEXT_BLKP(bp);
+        PUT_P(HDRP(tmp), PACK(next_size + curr_size - size, 0));
+        PUT_P(FTRP(tmp), PACK(next_size + curr_size - size, 0));
+        coalesce(tmp);
+      }
+      return bp;
+    }
 
-  copySize = GET_SIZE(HDRP(old_dp));
-  if (size < copySize)
-    copySize = size;
+    // else if (prev_alloc == 0 && (prev_size + curr_size >= size + DSIZE)) {
+    //   delete_node(prev);
+    //   if (size <= DSIZE)
+    //     size = 2 * DSIZE;
+    //   else
+    //     size = ALIGN(size + DSIZE);
+    //   if ((prev_size + curr_size) < (size + 2 * DSIZE))
+    //     size = prev_size + curr_size;
 
-  memcpy(new_dp, old_dp, copySize);
-  mm_free(old_dp);
+    //   size_t copysize = MIN(size, curr_size);
+    //   PUT_P(HDRP(prev), PACK(size, 1));
+    //   memcpy(prev, bp, copysize);
+    //   mm_free(bp);
+    //   PUT_P(FTRP(prev), PACK(size, 1));
 
-  return new_dp;
+    //   if ((prev_size + curr_size) >= (size + 2 * DSIZE)) {
+    //     tmp = NEXT_BLKP(prev);
+    //     PUT_P(HDRP(tmp), PACK(prev_size + curr_size - size, 0));
+    //     PUT_P(FTRP(tmp), PACK(prev_size + curr_size - size, 0));
+    //     coalesce(tmp);
+    //   }
+    //   return bp;
+    // }
+
+    // else if (GET_ALLOC(HDRP(PREV_BLKP(bp))) == 0 &&
+    //          GET_ALLOC(HDRP(NEXT_BLKP(bp))) == 0 &&
+    //          ((GET_SIZE(HDRP(NEXT_BLKP(bp))) + GET_SIZE(HDRP(PREV_BLKP(bp)))
+    //          +
+    //            curr_size) >= size + DSIZE)) {
+    //   void *prev = PREV_BLKP(bp);
+    //   void *next = NEXT_BLKP(bp);
+    //   size_t prev_size = GET_SIZE(FTRP(prev));
+    //   size_t next_size = GET_SIZE(FTRP(next));
+
+    //   size_t add_size = prev_size + next_size;
+    //   // remove next block from the free list
+    //   delete_node(prev);
+    //   delete_node(next);
+    //   if (size <= DSIZE)
+    //     size = 2 * DSIZE;
+    //   else
+    //     size = ALIGN(DSIZE + size); // align size
+    //   if ((add_size + curr_size) <
+    //       (size + 2 * DSIZE)) // if not big enough for new free block make
+    //       new
+    //                           // block take all space
+    //     size = add_size + curr_size;
+    //   assert(add_size + curr_size >= size);
+    //   PUT(HDRP(prev), PACK(size, 1)); // resize old
+    //   memcpy(prev, bp, curr_size);
+    //   PUT(FTRP(prev), PACK(size, 1)); // resize old
+    //   assert(GET_SIZE(HDRP(prev)) == size);
+
+    //   if ((add_size + curr_size) >=
+    //       (size + 2 * DSIZE)) { // if new free block initialize it
+    //     next = NEXT_BLKP(prev); // set new pointer to the new (empty) block
+    //     PUT(HDRP(next), PACK(add_size + curr_size - size, 0));
+    //     PUT(FTRP(next), PACK(add_size + curr_size - size, 0));
+    //     // add prev to free list
+    //     insert_node(next);
+    //     coalesce(next);
+    //   }
+    //   // assert(GET_SIZE(HDRP(bp)) + GET_SIZE(HDRP(prev)) == add_size +
+    //   // size_prev);
+    //   return prev;
+    // }
+
+    else {
+      tmp = mm_malloc(size);
+      if (tmp == NULL)
+        return NULL;
+
+      if (size < curr_size)
+        curr_size = size;
+
+      memcpy(tmp, bp, curr_size);
+      mm_free(bp);
+
+      return tmp;
+    }
+  }
 }
 
 static void *find_fit(size_t asize) {
