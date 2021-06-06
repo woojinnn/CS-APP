@@ -7,17 +7,20 @@
 #include "mm.h"
 #include "memlib.h"
 
+#define ALIGNMENT 8
+#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~0x7)
 #define WSIZE 4
 #define DSIZE 8
 #define CHUNKSIZE (1 << 12)
+#define MIN_BLOCK_SIZE 16
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MIN(x, y) ((x) > (y) ? (y) : (x))
 
 #define PACK(size, alloc) ((size) | (alloc))
 
 #define GET(p) (*(unsigned int *)(p))
-#define PUT(p, val) (*(unsigned int *)(p) = (val))
+#define PUT(p, val) (*(unsigned int *)(p) = (unsigned)(val))
 
 #define GET_SIZE(p) (GET(p) & ~0x7)
 #define GET_ALLOC(p) (GET(p) & 0x1)
@@ -28,47 +31,49 @@
 #define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE(((char *)(bp)-WSIZE)))
 #define PREV_BLKP(bp) ((char *)(bp)-GET_SIZE(((char *)(bp)-DSIZE)))
 
-#define GET_P(p) ((char *)*(unsigned int *)(p))
-#define PUT_P(p, val) (*(unsigned int *)(p) = (unsigned)(val))
+#define NEXT_FP(bp) ((int *)(bp))
+#define PREV_FP(bp) ((int *)((char *)(bp) + WSIZE))
 
-#define NEXTRP(bp) ((char *)(bp) + WSIZE)
-#define PREVRP(bp) ((char *)(bp))
+#define NEXT_FP_CONTENT(bp) ((void *)*(int *)(bp))
+#define PREV_FP_CONTENT(bp) ((void *)*(int *)((char *)(bp) + WSIZE))
 
-#define NEXT_FREE(bp) (GET_P((char *)(bp) + WSIZE))
-#define PREV_FREE(bp) (GET_P((char *)(bp)))
+#define SEG_CLASS(size) (MIN(MSB(size), SEGLIST_CLASSES) - 1)
+#define SEGLIST_CLASSES 32
+#define SEGLIST_ROOT(class) (heap_listp + (class * MIN_BLOCK_SIZE))
 
-#define SET_PREV(bp, val) (PUT_P(PREVRP(bp), val));
-#define SET_NEXT(bp, val) (PUT_P(NEXTRP(bp), val));
+static void *extend_heap(size_t size);
+static void place(void *ptr, size_t size);
+static void *find_fit(size_t size);
+static void *coalesce(void *ptr);
 
-#define ALIGNMENT 8
-#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~0x7)
+static void delete_node(void *ptr);
+static void insert_node(void *ptr);
+static int MSB(int size);
 
-static void *extend_heap(size_t words);
-static void *coalesce(void *bp);
-static void *find_fit(size_t asize);
-static void place(void *bp, size_t asize);
-
-static void delete_node(void *bp);
-static void insert_node(void *bp);
-
-static char *heap_listp;
-static char *free_listp_start = NULL;
-static char *free_listp_end = NULL;
+char *heap_listp;
 
 int mm_init(void) {
-  if ((heap_listp = mem_sbrk(6 * WSIZE)) == (void *)-1)
+  if ((heap_listp = mem_sbrk(DSIZE + (SEGLIST_CLASSES * MIN_BLOCK_SIZE))) ==
+      (void *)-1)
     return -1;
 
-  PUT(heap_listp, 0);
+  PUT(heap_listp, 0); // alignment padding
 
-  PUT(heap_listp + (1 * WSIZE), PACK(16, 1));
-  PUT_P(heap_listp + (2 * WSIZE), NULL);
-  PUT_P(heap_listp + (3 * WSIZE), NULL);
-  PUT(heap_listp + (4 * WSIZE), PACK(16, 1));
+  // prologue
+  PUT(heap_listp + WSIZE, PACK(DSIZE, 1));
+  PUT(heap_listp + DSIZE, PACK(DSIZE, 1));
+  heap_listp += DSIZE;
 
-  PUT(heap_listp + (5 * WSIZE), PACK(0, 1));
-  heap_listp += (2 * WSIZE);
-  free_listp_start = heap_listp;
+  // seglist
+  for (int i = 0; i < SEGLIST_CLASSES; i++) {
+    char *segroot = SEGLIST_ROOT(i);
+    PUT(HDRP(segroot), PACK(MIN_BLOCK_SIZE, 1));
+    PUT(segroot, NULL);
+    PUT(FTRP(segroot), PACK(MIN_BLOCK_SIZE, 1));
+  }
+
+  // epilogue
+  PUT(SEGLIST_ROOT(SEGLIST_CLASSES) + WSIZE, PACK(0, 1));
 
   if (extend_heap(CHUNKSIZE / WSIZE) == NULL)
     return -1;
@@ -76,11 +81,112 @@ int mm_init(void) {
   return 0;
 }
 
+// Malloc
+void *mm_malloc(size_t size) {
+  size_t asize;
+  size_t extend_size;
+  char *bp;
+
+  if (size == 0)
+    return NULL;
+
+  if (size <= DSIZE)
+    asize = MIN_BLOCK_SIZE;
+  else
+    asize = ALIGN(size + DSIZE);
+
+  if ((bp = find_fit(asize)) != NULL) {
+    place(bp, asize);
+    return bp;
+  }
+
+  extend_size = MAX(asize, CHUNKSIZE);
+  if ((bp = extend_heap(extend_size / WSIZE)) == NULL)
+    return NULL;
+
+  place(bp, asize);
+  return bp;
+}
+
+// free
+void mm_free(void *ptr) {
+  size_t size = GET_SIZE(HDRP(ptr));
+
+  PUT(HDRP(ptr), PACK(size, 0));
+  PUT(FTRP(ptr), PACK(size, 0));
+  coalesce(ptr);
+}
+
+void *mm_realloc(void *ptr, size_t size) {
+  if (size == 0) {
+    mm_free(ptr);
+    return NULL;
+  }
+
+  if (ptr == NULL)
+    return mm_malloc(size);
+
+  void *prev = PREV_BLKP(ptr);
+  int prev_alloc = GET_ALLOC(HDRP(prev));
+  size_t prev_size = GET_SIZE(HDRP(prev));
+
+  void *next = NEXT_BLKP(ptr);
+  int next_alloc = GET_ALLOC(HDRP(next));
+  size_t next_size = GET_SIZE(HDRP(next));
+
+  size_t curr_size = GET_SIZE(HDRP(ptr));
+  void *tmp;
+
+  void *new_ptr = ptr;
+  size_t new_size;
+  if (size <= DSIZE)
+    new_size = 2 * DSIZE;
+  else
+    new_size = ALIGN(DSIZE + size);
+
+  if (new_size <= curr_size) {
+    place(ptr, new_size);
+    return ptr;
+  }
+
+  if ((!next_alloc) && (curr_size + next_size > new_size)) {
+    delete_node(next);
+    PUT(HDRP(ptr), PACK(curr_size + next_size, 1));
+    PUT(FTRP(ptr), PACK(curr_size + next_size, 1));
+    place(ptr, curr_size + next_size);
+    return ptr;
+  }
+
+  else if (!prev_alloc && (prev_size > curr_size)) {
+    delete_node(prev);
+
+    PUT(HDRP(prev), PACK(new_size, 1));
+    memcpy(prev, ptr, MIN(new_size, curr_size));
+    PUT(FTRP(prev), PACK(new_size, 1));
+
+    if ((prev_size + curr_size) >= (new_size + 2 * DSIZE)) {
+      tmp = NEXT_BLKP(prev);
+      PUT(HDRP(tmp), PACK(prev_size + curr_size - new_size, 0));
+      PUT(FTRP(tmp), PACK(prev_size + curr_size - new_size, 0));
+      coalesce(tmp);
+    }
+    return prev;
+  }
+
+  new_ptr = mm_malloc(size);
+  if (new_ptr == NULL)
+    return NULL;
+
+  memcpy(new_ptr, ptr, MIN(size, curr_size));
+  mm_free(ptr);
+  return new_ptr;
+}
+
 static void *extend_heap(size_t words) {
   char *bp;
-  size_t size = ALIGN(words) * WSIZE;
 
-  if ((long)(bp = mem_sbrk(size)) == -1)
+  size_t size = (words % 2) ? (words + 1) * WSIZE : words * WSIZE;
+  if ((bp = mem_sbrk(size)) == (void *)-1)
     return NULL;
 
   PUT(HDRP(bp), PACK(size, 0));
@@ -88,243 +194,6 @@ static void *extend_heap(size_t words) {
   PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1));
 
   return coalesce(bp);
-}
-
-void *mm_malloc(size_t size) {
-  size_t asize;
-  size_t extendsize;
-  char *bp;
-
-  if (size == 0)
-    return NULL;
-
-  if (size <= DSIZE)
-    asize = 2 * DSIZE;
-  else
-    asize = ALIGN(DSIZE + size);
-
-  if ((bp = find_fit(asize)) != NULL) {
-    place(bp, asize);
-    return bp;
-  }
-
-  extendsize = MAX(asize, CHUNKSIZE);
-  if ((bp = extend_heap(extendsize / WSIZE)) == NULL)
-    return NULL;
-
-  place(bp, asize);
-
-  return bp;
-}
-
-void mm_free(void *bp) {
-
-  size_t size = GET_SIZE(HDRP(bp));
-
-  PUT(HDRP(bp), PACK(size, 0));
-  PUT(FTRP(bp), PACK(size, 0));
-  coalesce(bp);
-}
-
-void *mm_realloc(void *bp, size_t size) {
-  if (size == 0) {
-    mm_free(bp);
-    return NULL;
-  }
-
-  if (bp == NULL) {
-    return mm_malloc(size);
-  }
-
-  void *prev = PREV_BLKP(bp);
-  void *next = NEXT_BLKP(bp);
-
-  int prev_alloc = GET_ALLOC(HDRP(prev));
-  int next_alloc = GET_ALLOC(HDRP(next));
-
-  size_t curr_size = GET_SIZE(HDRP(bp));
-
-  void *tmp;
-
-  // can accomodate within current block
-  if (curr_size >= size + DSIZE) {
-    if (curr_size - size - DSIZE >= 2 * DSIZE) {
-      if (size <= DSIZE)
-        size = 2 * DSIZE;
-      else
-        size = ALIGN(DSIZE + size);
-
-      if ((curr_size - size) > (2 * DSIZE)) {
-        PUT(HDRP(bp), PACK(size, 1));
-        PUT(FTRP(bp), PACK(size, 1));
-        PUT(HDRP(next), PACK(curr_size - size, 0));
-        PUT(FTRP(next), PACK(curr_size - size, 0));
-        coalesce(next);
-        return bp;
-      }
-    }
-    return bp;
-  }
-
-  else {
-    size_t possible_next_size = 0;
-    size_t possible_prev_size = 0;
-    size_t next_offset = 0;
-    size_t prev_offset = 0;
-
-    tmp = bp;
-    if (next_alloc == 0) {
-      while ((GET_ALLOC(HDRP(NEXT_BLKP(tmp))) == 0) &&
-             (curr_size + possible_next_size < size + 2 * DSIZE)) {
-        possible_next_size += GET_SIZE(HDRP(NEXT_BLKP(tmp)));
-        tmp = NEXT_BLKP(tmp);
-        next_offset++;
-      }
-    }
-
-    tmp = bp;
-    if (prev_alloc == 0) {
-      while ((GET_ALLOC(HDRP(PREV_BLKP(tmp))) == 0) &&
-             (curr_size + possible_prev_size < size + 2 * DSIZE)) {
-        possible_prev_size += GET_SIZE(HDRP(PREV_BLKP(tmp)));
-        tmp = PREV_BLKP(tmp);
-        prev_offset++;
-      }
-    }
-
-    if (possible_next_size + curr_size >= size + DSIZE) {
-      tmp = bp;
-      printf("next_offset: %u\n", next_offset);
-      for (size_t i = 0; i < next_offset; i++) {
-        printf("i: %u\n", i);
-        tmp = NEXT_BLKP(tmp);
-        delete_node(tmp);
-      }
-
-      if ((possible_next_size + curr_size) < (size + 2 * DSIZE))
-        size = curr_size + possible_next_size;
-
-      PUT_P(HDRP(bp), PACK(size, 1));
-      PUT_P(FTRP(bp), PACK(size, 1));
-
-      if ((possible_next_size + curr_size) >= (size + 2 * DSIZE)) {
-        tmp = NEXT_BLKP(bp);
-        PUT_P(HDRP(tmp), PACK(possible_next_size + curr_size - size, 0));
-        PUT_P(FTRP(tmp), PACK(possible_next_size + curr_size - size, 0));
-        coalesce(tmp);
-      }
-      return bp;
-    }
-
-    if (possible_prev_size + curr_size >= size + DSIZE) {
-      prev = bp;
-      for (size_t i = 0; i < prev_offset; i++) {
-        prev = PREV_BLKP(prev);
-        delete_node(prev);
-      }
-
-      if ((possible_prev_size + curr_size) < (size + 2 * DSIZE))
-        size = possible_prev_size + curr_size;
-
-      size_t copysize = MIN(size, curr_size);
-      memmove(prev, bp, copysize);
-      PUT_P(HDRP(prev), PACK(size, 1));
-      PUT_P(FTRP(prev), PACK(size, 1));
-
-      if ((possible_prev_size + curr_size) >= (size + 2 * DSIZE)) {
-        tmp = NEXT_BLKP(prev);
-        PUT_P(HDRP(tmp), PACK(possible_prev_size + curr_size - size, 0));
-        PUT_P(FTRP(tmp), PACK(possible_prev_size + curr_size - size, 0));
-        coalesce(tmp);
-      }
-      return prev;
-    }
-
-    tmp = mm_malloc(size);
-    if (tmp == NULL)
-      return NULL;
-
-    if (size < curr_size)
-      curr_size = size;
-
-    memcpy(tmp, bp, curr_size);
-    mm_free(bp);
-
-    return tmp;
-  }
-}
-
-static void *find_fit(size_t asize) {
-  void *bp;
-
-  // for (bp = PREV_FREE(heap_listp); bp != NULL; bp = PREV_FREE(bp))
-  for (bp = free_listp_start; bp != free_listp_end; bp = PREV_FREE(bp)) {
-    if (GET_SIZE(HDRP(bp)) >= asize) {
-      return bp;
-    }
-  }
-
-  return NULL;
-}
-
-static void place(void *bp, size_t asize) {
-  size_t csize = GET_SIZE(HDRP(bp));
-
-  if ((csize - asize) >= (2 * DSIZE)) {
-    PUT(HDRP(bp), PACK(asize, 1));
-    PUT(FTRP(bp), PACK(asize, 1));
-    delete_node(bp);
-
-    bp = NEXT_BLKP(bp);
-    PUT(HDRP(bp), PACK(csize - asize, 0));
-    PUT(FTRP(bp), PACK(csize - asize, 0));
-    insert_node(bp);
-  }
-
-  else {
-    PUT(HDRP(bp), PACK(csize, 1));
-    PUT(FTRP(bp), PACK(csize, 1));
-    delete_node(bp);
-  }
-}
-
-static void delete_node(void *bp) {
-  if (bp == free_listp_start && bp == free_listp_end) {
-    free_listp_start = NULL;
-    free_listp_end = NULL;
-  }
-
-  else if (bp == free_listp_start) {
-    free_listp_start = PREV_FREE(bp);
-    PUT_P(NEXTRP(free_listp_start), 0);
-  } else if (bp == free_listp_end) {
-    free_listp_end = NEXT_FREE(bp);
-    PUT_P(PREVRP(free_listp_end), 0);
-  }
-
-  if (PREV_FREE(bp) != (char *)NULL)
-    SET_NEXT(PREV_FREE(bp), NEXT_FREE(bp));
-
-  if (NEXT_FREE(bp) != (char *)NULL)
-    SET_PREV(NEXT_FREE(bp), PREV_FREE(bp));
-}
-
-static void insert_node(void *bp) {
-  if (free_listp_start == NULL) {
-    PUT_P(PREVRP(bp), 0);
-    PUT_P(NEXTRP(bp), 0);
-    free_listp_start = bp;
-    free_listp_end = bp;
-    return;
-  }
-
-  else {
-    PUT_P(PREVRP(bp), free_listp_start);
-    PUT_P(NEXTRP(bp), NULL);
-    PUT_P(NEXTRP(free_listp_start), bp);
-    free_listp_start = bp;
-    return;
-  }
 }
 
 static void *coalesce(void *bp) {
@@ -338,38 +207,106 @@ static void *coalesce(void *bp) {
   }
 
   else if (prev_alloc && !next_alloc) {
-    delete_node(NEXT_BLKP(bp));
-
     size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
+    delete_node(NEXT_BLKP(bp));
     PUT(HDRP(bp), PACK(size, 0));
     PUT(FTRP(bp), PACK(size, 0));
-
     insert_node(bp);
   }
 
   else if (!prev_alloc && next_alloc) {
-    delete_node(PREV_BLKP(bp));
-
     size += GET_SIZE(HDRP(PREV_BLKP(bp)));
+    delete_node(PREV_BLKP(bp));
     PUT(FTRP(bp), PACK(size, 0));
     PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
-
-    insert_node(PREV_BLKP(bp));
-
     bp = PREV_BLKP(bp);
+    insert_node(bp);
   }
 
   else {
+    size += (GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp))));
     delete_node(PREV_BLKP(bp));
     delete_node(NEXT_BLKP(bp));
-    insert_node(PREV_BLKP(bp));
-
-    size += GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp)));
     PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
     PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
-
     bp = PREV_BLKP(bp);
+    insert_node(bp);
   }
 
   return bp;
+}
+
+// First-fit
+static void *find_fit(size_t size) {
+  int *ptr;
+  int seg_class = SEG_CLASS(size);
+
+  for (int class = seg_class; class < SEGLIST_CLASSES; class ++) {
+    ptr = NEXT_FP_CONTENT(SEGLIST_ROOT(class));
+    while (ptr != NULL) {
+      if (size <= GET_SIZE(HDRP(ptr)))
+        return ptr;
+
+      ptr = NEXT_FP_CONTENT(ptr);
+    }
+  }
+  return NULL;
+}
+
+static void place(void *bp, size_t asize) {
+  size_t csize = GET_SIZE(HDRP(bp));
+
+  if ((csize - asize) >= (MIN_BLOCK_SIZE)) {
+    if (GET_ALLOC(HDRP(bp)) == 0) // don't require delete_node for realloc
+      delete_node(bp);
+    PUT(HDRP(bp), PACK(asize, 1));
+    PUT(FTRP(bp), PACK(asize, 1));
+
+    bp = NEXT_BLKP(bp);
+    PUT(HDRP(bp), PACK(csize - asize, 0));
+    PUT(FTRP(bp), PACK(csize - asize, 0));
+    insert_node(bp);
+  }
+
+  else {
+    if (GET_ALLOC(HDRP(bp)) == 0)
+      delete_node(bp);
+    PUT(HDRP(bp), PACK(csize, 1));
+    PUT(FTRP(bp), PACK(csize, 1));
+  }
+}
+
+int MSB(int num) {
+  int r = 0;
+  while (num >>= 1)
+    r++;
+  return r;
+}
+
+// referred
+// https://www.geeksforgeeks.org/insert-value-sorted-way-sorted-doubly-linked-list/
+static void insert_node(void *bp) {
+  size_t size = GET_SIZE(HDRP(bp));
+  void *prev = SEGLIST_ROOT(SEG_CLASS(size));
+
+  // sorted doubly linked list for optimization
+  while ((NEXT_FP_CONTENT(prev) != NULL) &&
+         (GET_SIZE(HDRP(NEXT_FP_CONTENT(prev))) < size))
+    prev = NEXT_FP_CONTENT(prev);
+
+  void *next = NEXT_FP_CONTENT(prev);
+  if (next != NULL)
+    PUT(PREV_FP(next), bp);
+  PUT(NEXT_FP(bp), next);
+  PUT(PREV_FP(bp), prev);
+  PUT(NEXT_FP(prev), bp);
+}
+
+static void delete_node(void *bp) {
+  void *next = NEXT_FP_CONTENT(bp);
+  void *prev = PREV_FP_CONTENT(bp);
+  PUT(NEXT_FP(prev), next);
+  if (next != NULL)
+    PUT(PREV_FP(next), prev);
+  return;
 }
