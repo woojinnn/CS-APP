@@ -185,7 +185,7 @@ void *mm_realloc(void *ptr, size_t size) {
 static void *extend_heap(size_t words) {
   char *bp;
 
-  size_t size = (words % 2) ? (words + 1) * WSIZE : words * WSIZE;
+  size_t size = ALIGN(words * WSIZE);
   if ((bp = mem_sbrk(size)) == (void *)-1)
     return NULL;
 
@@ -207,16 +207,16 @@ static void *coalesce(void *bp) {
   }
 
   else if (prev_alloc && !next_alloc) {
-    size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
     delete_node(NEXT_BLKP(bp));
+    size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
     PUT(HDRP(bp), PACK(size, 0));
     PUT(FTRP(bp), PACK(size, 0));
     insert_node(bp);
   }
 
   else if (!prev_alloc && next_alloc) {
-    size += GET_SIZE(HDRP(PREV_BLKP(bp)));
     delete_node(PREV_BLKP(bp));
+    size += GET_SIZE(HDRP(PREV_BLKP(bp)));
     PUT(FTRP(bp), PACK(size, 0));
     PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
     bp = PREV_BLKP(bp);
@@ -224,9 +224,9 @@ static void *coalesce(void *bp) {
   }
 
   else {
-    size += (GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp))));
     delete_node(PREV_BLKP(bp));
     delete_node(NEXT_BLKP(bp));
+    size += (GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp))));
     PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
     PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
     bp = PREV_BLKP(bp);
@@ -256,9 +256,10 @@ static void *find_fit(size_t size) {
 static void place(void *bp, size_t asize) {
   size_t csize = GET_SIZE(HDRP(bp));
 
+  if (GET_ALLOC(HDRP(bp)) == 0) // don't require delete_node for realloc
+    delete_node(bp);
+
   if ((csize - asize) >= (MIN_BLOCK_SIZE)) {
-    if (GET_ALLOC(HDRP(bp)) == 0) // don't require delete_node for realloc
-      delete_node(bp);
     PUT(HDRP(bp), PACK(asize, 1));
     PUT(FTRP(bp), PACK(asize, 1));
 
@@ -269,8 +270,6 @@ static void place(void *bp, size_t asize) {
   }
 
   else {
-    if (GET_ALLOC(HDRP(bp)) == 0)
-      delete_node(bp);
     PUT(HDRP(bp), PACK(csize, 1));
     PUT(FTRP(bp), PACK(csize, 1));
   }
