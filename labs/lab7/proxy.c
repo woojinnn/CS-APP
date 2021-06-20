@@ -5,11 +5,8 @@
 #include "csapp.h"
 
 /* Recommended max cache and object sizes */
-#define MAX_CACHE_SIZE 1049000
-#define MAX_OBJECT_SIZE 102400
-
-// Default port is 80, but it should manage other ports as well if port is
-// included in uri
+#define MAX_CACHE_SIZE 1049000 // 1MB
+#define MAX_OBJECT_SIZE 102400 // 100kB
 #define DEFAULT_PORT 80
 
 /* You won't lose style points for including this long line in your code */
@@ -27,9 +24,21 @@ void make_request_message(char *header, char *host, char *path, rio_t *rp);
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg,
                  char *longmsg);
 
-int main(int argc, char **argv) {
+// functions for cache
+int find_cache(char *uri);
+int choose_victim(void);
+void update_cache_priority(int index);
+void update_cache_content(char *uri, char *buf);
 
-  // init element required for connections
+typedef struct {
+  int priority;
+  char cache_content[MAX_OBJECT_SIZE];
+  char cache_url[MAXLINE];
+} cache_node;
+
+cache_node cache[10];
+
+int main(int argc, char **argv) {
   int listenfd;
   pthread_t tid;
   struct sockaddr_storage clientaddr;
@@ -41,6 +50,12 @@ int main(int argc, char **argv) {
   }
 
   Signal(SIGPIPE, SIG_IGN);
+
+  for (int i = 0; i < 10; i++) {
+    cache[i].priority = i;
+    *cache[i].cache_content = '\0';
+    *cache[i].cache_url = '\0';
+  }
 
   listenfd = Open_listenfd(argv[1]);
   while (1) {
@@ -64,17 +79,20 @@ void *thread_per_connection(void *data) {
 
 void handle_client(int clientfd) {
   rio_t client_rio, server_rio;
-  char method[MAXLINE];
-  char uri[MAXLINE];
-  char version[MAXLINE];
-  int server_fd;
-
+  char method[MAXLINE], uri[MAXLINE], version[MAXLINE];
+  char request_to_server[MAXLINE];
   char buf[MAXLINE];
 
-  char host[MAXLINE];
-  char path[MAXLINE];
+  int server_fd;
+
+  char host[MAXLINE], path[MAXLINE];
   int port;
   char strport[MAXLINE];
+
+  char cache_buf[MAX_OBJECT_SIZE];
+  int buf_size = 0;
+  int cached;
+  size_t n;
 
   // read client request
   Rio_readinitb(&client_rio, clientfd);
@@ -88,13 +106,15 @@ void handle_client(int clientfd) {
     return;
   }
 
-  // parse uri
+  cached = find_cache(uri);
+  if (cached != -1) {
+    Rio_writen(clientfd, cache[cached].cache_content,
+               strlen(cache[cached].cache_content));
+    update_cache_priority(cached);
+    return;
+  }
+
   parse_uri(uri, host, path, &port);
-
-  // server sent query
-  char request_to_server[MAXLINE];
-
-  // query that would be sent to end server
   make_request_message(request_to_server, host, path, &client_rio);
 
   sprintf(strport, "%d", port);
@@ -102,16 +122,16 @@ void handle_client(int clientfd) {
 
   Rio_readinitb(&server_rio, server_fd);
 
-  // write to server
   Rio_writen(server_fd, request_to_server, strlen(request_to_server));
-
-  // receive from server
-  size_t n;
-  while ((n = Rio_readlineb(&server_rio, buf, MAXLINE)) != 0)
+  while ((n = Rio_readlineb(&server_rio, buf, MAXLINE)) != 0) {
+    buf_size += n;
+    if (buf_size < MAX_OBJECT_SIZE)
+      strcat(cache_buf, buf);
     Rio_writen(clientfd, buf, n);
+  }
 
-  // close connection to server
   Close(server_fd);
+  update_cache_content(uri, cache_buf);
 }
 
 void make_request_message(char *header, char *host, char *path, rio_t *rp) {
@@ -140,6 +160,8 @@ void make_request_message(char *header, char *host, char *path, rio_t *rp) {
 
 // parse uri and receive port, path, host, ...
 void parse_uri(char *uri, char *host, char *path, int *port) {
+  char uri_backup[MAXLINE];
+  strcpy(uri_backup, uri);
   //  For example: http://www.google.com:80/index.html
 
   // prologue
@@ -164,7 +186,7 @@ void parse_uri(char *uri, char *host, char *path, int *port) {
   *path_pos = '/';
   strcpy(path, path_pos);
 
-  return;
+  strcpy(uri, uri_backup);
 }
 
 void clienterror(int fd, char *cause, char *errnum, char *shortmsg,
@@ -174,4 +196,41 @@ void clienterror(int fd, char *cause, char *errnum, char *shortmsg,
   Rio_writen(fd, buf, strlen(buf));
   sprintf(buf, "Content-type: text/html\r\n\r\n");
   Rio_writen(fd, buf, strlen(buf));
+}
+
+int find_cache(char *uri) {
+  for (int i = 0; i < 10; i++) {
+    if (strcmp(uri, cache[i].cache_url) == 0)
+      return i;
+  }
+
+  return -1;
+}
+
+int choose_victim(void) {
+  for (int idx = 0; idx < 10; idx++) {
+    if ((strlen(cache[idx].cache_content) == 0) || (cache[idx].priority == 9))
+      return idx;
+  }
+  return -1;
+}
+
+void update_cache_priority(int index) {
+  int original_priority = cache[index].priority;
+
+  for (int i = 0; i < 10; i++) {
+    if (cache[i].priority < original_priority)
+      cache[i].priority++;
+  }
+
+  cache[index].priority = 0;
+}
+
+void update_cache_content(char *uri, char *buf) {
+  int i = choose_victim();
+
+  strcpy(cache[i].cache_url, uri);
+  strcpy(cache[i].cache_content, buf);
+
+  update_cache_priority(i);
 }
